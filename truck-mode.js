@@ -25,6 +25,8 @@
   const ticketLegacy = 'ukcqrcode-truck-ticket-v1:' + rootUrl.pathname + ':';
   let latestDate = today();
   let latestTicket = 0;
+  let latestRequestId = '';
+  let readyForPickup = false;
 
   function clearOldTickets() {
     const date = today();
@@ -32,6 +34,8 @@
     if (date !== latestDate) {
       latestDate = date;
       latestTicket = 0;
+      latestRequestId = '';
+      readyForPickup = false;
     }
     try {
       for (let i = localStorage.length - 1; i >= 0; i--) {
@@ -44,23 +48,56 @@
     return key;
   }
 
-  try {
-    latestTicket = Number(localStorage.getItem(clearOldTickets())) || 0;
-  } catch {}
+  function loadTicket() {
+    try {
+      const raw = localStorage.getItem(clearOldTickets());
+      if (!raw) { latestTicket = 0; latestRequestId = ''; readyForPickup = false; return; }
+      const value = JSON.parse(raw);
+      if (value && typeof value === 'object') {
+        latestTicket = Number(value.serial) || 0;
+        latestRequestId = typeof value.requestId === 'string' ? value.requestId : '';
+        readyForPickup = value.ready === true;
+      } else {
+        latestTicket = Number(value) || 0;
+        latestRequestId = '';
+        readyForPickup = false;
+      }
+    } catch { latestTicket = 0; latestRequestId = ''; readyForPickup = false; }
+  }
+  loadTicket();
 
-  function rememberTicket(serial) {
+  function rememberTicket(serial, requestId) {
     if (!Number.isSafeInteger(serial) || serial < 1) return;
     const key = clearOldTickets();
     latestTicket = serial;
-    try { localStorage.setItem(key, String(serial)); } catch {}
+    latestRequestId = requestId;
+    readyForPickup = false;
+    try { localStorage.setItem(key, JSON.stringify({serial, requestId, ready:false, day:latestDate})); } catch {}
   }
 
-  function savedTicket() {
+  function savedTicket() { loadTicket(); return latestTicket; }
+  function pickupMarkup() {
+    const serial = savedTicket();
+    const stateText = serial ? (readyForPickup ? '餐點已備妥' : '製作中') : '送單後顯示';
+    return '<div class="pickup-display ' + (readyForPickup ? 'pickup-ready' : '') + '" aria-live="polite"><span>目前</span><strong>' + (serial ? String(serial).padStart(4, '0') : '—') + '</strong><span>取餐</span><small>' + stateText + '</small></div>';
+  }
+  function updatePickupMarkup() {
+    const current = document.querySelector('.pickup-display');
+    if (current) current.outerHTML = pickupMarkup();
+  }
+  async function refreshPickupStatus() {
+    const serial = savedTicket();
+    if (!serial || !/^[a-zA-Z0-9-]{16,64}$/.test(latestRequestId)) return;
     try {
-      const stored = Number(localStorage.getItem(clearOldTickets()));
-      latestTicket = Number.isSafeInteger(stored) && stored > 0 ? stored : 0;
+      const result = await api('/api/order/status?requestId=' + encodeURIComponent(latestRequestId));
+      const nextSerial = Number(result.serial), nextReady = result.ready === true;
+      if (nextSerial !== latestTicket || nextReady !== readyForPickup) {
+        latestTicket = nextSerial;
+        readyForPickup = nextReady;
+        localStorage.setItem(clearOldTickets(), JSON.stringify({serial:latestTicket,requestId:latestRequestId,ready:readyForPickup,day:latestDate}));
+        updatePickupMarkup();
+      }
     } catch {}
-    return latestTicket;
   }
 
   function showSavedTickets() {
@@ -73,7 +110,7 @@
 
   header = function () {
     return '<header class="app-header"><a class="brand" href="/"><img class="brand-logo" src="./brand-logo.svg" alt="碗粿張標誌"><div><strong>碗粿張</strong><small>北屯昌平・傳統古早味</small></div></a><div class="header-right">' +
-      (path === '/' ? '<button type="button" class="btn small secondary" data-truck-tickets>我的取餐號碼</button>' : '<span class="subtle">餐車營運管理</span>' + connection() + '<button class="link-button" data-action="logout">登出</button>') +
+      (path === '/' ? pickupMarkup() : '<span class="subtle">餐車營運管理</span>' + connection() + '<button class="link-button" data-action="logout">登出</button>') +
       '</div></header>';
   };
 
@@ -112,8 +149,9 @@
     busy = true; renderGuest();
     const orderItems = state.cart.map(x => ({ id:x.id, qty:x.qty, note:x.note || '', price:x.price }));
     try {
-      const result = await api('/api/order', { requestId:newId(), items:orderItems });
-      rememberTicket(result.serial);
+      const requestId = newId();
+      const result = await api('/api/order', { requestId, items:orderItems });
+      rememberTicket(result.serial, requestId);
       state.cart = []; persist(); state.drawer = false;
       modal('<div class="truck-confirm"><h2>訂單已送出</h2><div>請記下您的取餐號碼</div><div class="truck-confirm-number">' + esc(String(result.serial).padStart(4,'0')) + '</div><hr>' +
         orderItems.map(x => { const p=state.menu.find(y=>y.id===x.id); return '<div class="row"><span>' + esc(p?.name || '') + ' × ' + x.qty + (x.note ? '<div class="note">' + esc(x.note) + '</div>' : '') + '</span><b>' + money((p?.price || x.price) * x.qty) + '</b></div>'; }).join('') +
@@ -168,7 +206,7 @@
         const result=await api('/api/board');
         if (JSON.stringify(result.rows)!==JSON.stringify(state.rows)) { state.rows=result.rows; if(!$('#modal').innerHTML) render(); }
       } else if (path==='/') {
-        // 訪客頁不再輪詢桌號；餐點由初次載入取得。
+        await refreshPickupStatus();
       } else { polling=false; return baseRefresh(); }
       if(!state.online){state.online=true;render();}
     } catch(error) {
