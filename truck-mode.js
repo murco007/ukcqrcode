@@ -50,8 +50,9 @@
 
   function rememberTicket(serial) {
     if (!Number.isSafeInteger(serial) || serial < 1) return;
+    const key = clearOldTickets();
     latestTicket = serial;
-    try { localStorage.setItem(clearOldTickets(), String(serial)); } catch {}
+    try { localStorage.setItem(key, String(serial)); } catch {}
   }
 
   function savedTicket() {
