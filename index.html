@@ -260,7 +260,7 @@ window.__startTruckApp=()=>{load();setInterval(refresh,2500)};
  function lines(job){const b=job.bill||{},paid=job.kind==='receipt'&&b.status==='paid',receipt=job.kind==='receipt',rows=job.lines||[];
   const out=['碗粿張',receipt?(paid?'結帳清單（非統一發票）':'消費明細（尚未結帳）'):'廚房點餐單'];
   const serial=String(b.serial??'');
-  out.push(/^[1-9]\d*$/.test(serial)?'流水單號 '+serial.padStart(4,'0'):(b.pickup_code?'取餐碼 '+b.pickup_code:'流水單號 —'));
+  out.push(/^[1-9]\d*$/.test(serial)?'取餐號碼 '+serial.padStart(4,'0'):(b.pickup_code?'取餐碼 '+b.pickup_code:'取餐號碼 —'));
   if(String(job.id).startsWith('reprint:')||job.reprint)out.push('＊＊ 重印 ＊＊');
   if(b.pickup_code)out.push('取餐碼：'+b.pickup_code,'取餐日期：'+b.pickup_date,(b.preorder_channel==='web'?'網路':'電話')+'預購');out.push('時間：'+stamp(job.created_at),'------------------------------');let total=0;
   for(const l of rows){out.push(l.name+' × '+l.qty);if(receipt)out.push('NT$'+l.price+' × '+l.qty+' = NT$'+l.price*l.qty);if(l.note)out.push('備註：'+l.note);out.push('');total+=l.price*l.qty;}
