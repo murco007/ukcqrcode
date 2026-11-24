@@ -27,7 +27,7 @@ Deno.serve(async request=>{
   if(session&&!/^(admin|kitchen|cashier)\.\d{13}\.[a-f0-9]{64}$/.test(session))return reply({error:'請重新登入。'},401,cors);
   const keys=['SESSION_SECRET','STAFF_PASSWORD_SALT','CASHIER_PASSWORD_HASH','KITCHEN_PASSWORD_HASH','ADMIN_USERNAME','ADMIN_PASSWORD_HASH','ADMIN_PASSWORD_SALT'];
   const env=Object.fromEntries(keys.map(key=>[key,Deno.env.get(key)||privateSettings[key]||'']));
-  if(keys.some(key=>!env[key])&&!['/api/menu','/api/table'].includes(path))return reply({error:'雲端登入設定尚未完成，暫不接受點餐。'},503,cors);
+  if(keys.some(key=>!env[key])&&!['/api/menu','/api/table','/api/order/status'].includes(path))return reply({error:'雲端登入設定尚未完成，暫不接受點餐。'},503,cors);
   const result=await database().begin(async transaction=>{
    await transaction.unsafe('SET LOCAL search_path TO ordering, pg_catalog');
    // Serialize complete business operations to preserve order/checkout invariants.
