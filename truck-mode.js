@@ -21,43 +21,51 @@
   `;
   document.head.appendChild(style);
 
-  const ticketPrefix = 'ukcqrcode-truck-ticket-v1:' + rootUrl.pathname + ':';
-  const recentTickets = new Set();
+  const ticketBase = 'ukcqrcode-truck-ticket:' + rootUrl.pathname + ':';
+  const ticketKey = ticketBase + today();
+  const ticketLegacy = 'ukcqrcode-truck-ticket-v1:' + rootUrl.pathname + ':';
+  let latestTicket = 0;
+
+  // 清除此瀏覽器先前日期與舊版的取餐號碼，只保留今日最後一筆。
+  try {
+    for (let i = localStorage.length - 1; i >= 0; i--) {
+      const key = localStorage.key(i);
+      if (key?.startsWith(ticketLegacy) || (key?.startsWith(ticketBase) && key !== ticketKey)) {
+        localStorage.removeItem(key);
+      }
+    }
+    latestTicket = Number(localStorage.getItem(ticketKey)) || 0;
+  } catch {}
 
   function rememberTicket(serial) {
     if (!Number.isSafeInteger(serial) || serial < 1) return;
-    recentTickets.add(serial);
-    try { localStorage.setItem(ticketPrefix + serial, '1'); } catch {}
+    latestTicket = serial;
+    try { localStorage.setItem(ticketKey, String(serial)); } catch {}
   }
 
-  function savedTickets() {
-    const tickets = new Set(recentTickets);
+  function savedTicket() {
     try {
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (!key?.startsWith(ticketPrefix)) continue;
-        const serial = Number(key.slice(ticketPrefix.length));
-        if (Number.isSafeInteger(serial) && serial > 0) tickets.add(serial);
-      }
+      const stored = Number(localStorage.getItem(ticketKey));
+      if (Number.isSafeInteger(stored) && stored > 0) latestTicket = stored;
     } catch {}
-    return [...tickets].sort((a, b) => b - a);
+    return latestTicket;
   }
 
   function showSavedTickets() {
-    const tickets = savedTickets();
-    modal('<h2>我的流水號</h2><p>此瀏覽器保存的送單紀錄</p>' +
-      (tickets.length ? '<ul>' + tickets.map(serial => '<li><strong>' + String(serial).padStart(4, '0') + '</strong></li>').join('') + '</ul>' :
-        '<p>目前沒有已儲存的流水號。</p>') +
+    const serial = savedTicket();
+    modal('<h2>我的取餐號碼</h2><p>今日最新送單紀錄</p>' +
+      (serial ? '<p><strong>' + String(serial).padStart(4, '0') + '</strong></p>' :
+        '<p>今日尚無已儲存的取餐號碼。</p>') +
       '<div class="modal-actions"><button class="btn" data-action="close">關閉</button></div>');
   }
 
   header = function () {
     return '<header class="app-header"><a class="brand" href="/"><img class="brand-logo" src="./brand-logo.svg" alt="碗粿張標誌"><div><strong>碗粿張</strong><small>北屯昌平・傳統古早味</small></div></a><div class="header-right">' +
-      (path === '/' ? '<button type="button" class="btn small secondary" data-truck-tickets>我的流水號</button>' : '<span class="subtle">餐車營運管理</span>' + connection() + '<button class="link-button" data-action="logout">登出</button>') +
+      (path === '/' ? '<button type="button" class="btn small secondary" data-truck-tickets>我的取餐號碼</button>' : '<span class="subtle">餐車營運管理</span>' + connection() + '<button class="link-button" data-action="logout">登出</button>') +
       '</div></header>';
   };
 
-  billTitle = b => '流水號 ' + String(b.serial ?? b.id ?? '').padStart(4, '0');
+  billTitle = b => '取餐號碼 ' + String(b.serial ?? b.id ?? '').padStart(4, '0');
 
   cartContent = function () {
     return '<div class="cart-head"><h2>我的點餐清單</h2>' +
@@ -68,7 +76,7 @@
       ).join('') : '<div class="cart-empty"><span class="empty-icon">🍲</span><strong>還沒有選餐</strong>請從餐點清單加入餐點</div>') +
       '<div class="cart-total row"><span>合計</span><strong class="price">' + money(cartTotal()) + '</strong></div>' +
       '<button class="btn" data-action="submit" ' + (state.cloudReady === false || !state.cart.length || busy || !state.online ? 'disabled' : '') + '>' + (busy ? '送單中…' : '送出訂單') + '</button>' +
-      '<div class="cart-note">送單後請記下畫面上的流水號，至櫃檯依號結帳。</div>' +
+      '<div class="cart-note">送單後請記下畫面上的取餐號碼，至櫃檯依號結帳。</div>' +
       (state.cart.length ? '' : '');
   };
 
@@ -79,7 +87,7 @@
       (state.cloudReady === false ? '<div role="status" style="padding:16px;text-align:center;background:#fff1d6;color:#704812;font-size:18px">系統準備中，暫時不能送出訂單。</div>' : '') +
       '<div class="guest-layout"><aside class="categories"><div class="eyebrow">MENU</div><h3>選擇餐點</h3><div class="category-picker"><label for="category-choice">餐點分類</label><select id="category-choice">' +
       categories.map(c => '<option value="' + esc(c) + '"' + (state.category === c ? ' selected' : '') + '>' + esc(c) + '</option>').join('') +
-      '</select></div><div class="category-foot">選好餐點後送出訂單，記下流水號，再至櫃檯結帳。</div></aside><main>' +
+      '</select></div><div class="category-foot">選好餐點後送出訂單，記下取餐號碼，再至櫃檯結帳。</div></aside><main>' +
       '<section class="hero"><div class="hero-copy"><div class="eyebrow">TAICHUNG · TRADITIONAL TAIWANESE FOOD</div><h1>一碗古早味，<br>慢慢品台灣。</h1><p>碗粿張，把熟悉的米香端上桌。</p><span class="pill" style="display:inline-block;margin-top:13px;background:#ffffffb8;font-size:12px">傳統碗粿 · 台灣米食 · 暖心湯品</span></div></section>' +
       '<div class="section-heading"><h2 id="menu-heading">' + esc(state.category) + '</h2><input class="search" id="search" placeholder="搜尋餐點" aria-label="搜尋餐點" value="' + esc(state.query) + '"></div>' +
       '<div class="menu-grid" id="menu-grid">' + foodCards() + '</div><p class="source-note">餐點與售價目前為建置用初始範例，店主確認前均不開放點餐；請先於後台「餐點管理」核對品項與價格。</p><footer class="developer-credit"><span>碗粿張 QR 點餐・<a href="https://www.facebook.com/profile.php?id=61551696695325" target="_blank" rel="noopener">官方粉絲專頁</a>・<a href="https://maps.google.com/?q=24.1651821,120.6940609" target="_blank" rel="noopener">Google 地圖</a></span></footer></main>' +
@@ -95,9 +103,9 @@
       const result = await api('/api/order', { requestId:newId(), items:orderItems });
       rememberTicket(result.serial);
       state.cart = []; persist(); state.drawer = false;
-      modal('<div class="truck-confirm"><h2>訂單已送出</h2><div>請記下您的流水號</div><div class="truck-confirm-number">' + esc(String(result.serial).padStart(4,'0')) + '</div><hr>' +
+      modal('<div class="truck-confirm"><h2>訂單已送出</h2><div>請記下您的取餐號碼</div><div class="truck-confirm-number">' + esc(String(result.serial).padStart(4,'0')) + '</div><hr>' +
         orderItems.map(x => { const p=state.menu.find(y=>y.id===x.id); return '<div class="row"><span>' + esc(p?.name || '') + ' × ' + x.qty + (x.note ? '<div class="note">' + esc(x.note) + '</div>' : '') + '</span><b>' + money((p?.price || x.price) * x.qty) + '</b></div>'; }).join('') +
-        '<div class="row" style="margin-top:14px"><strong>合計</strong><strong>' + money(orderItems.reduce((sum,x)=>sum+x.price*x.qty,0)) + '</strong></div><p class="checkout-reminder">請至櫃檯依流水號結帳</p></div><div class="modal-actions"><button class="btn" data-action="close">完成</button></div>');
+        '<div class="row" style="margin-top:14px"><strong>合計</strong><strong>' + money(orderItems.reduce((sum,x)=>sum+x.price*x.qty,0)) + '</strong></div><p class="checkout-reminder">請至櫃檯依取餐號碼結帳</p></div><div class="modal-actions"><button class="btn" data-action="close">完成</button></div>');
     } catch (error) {
       toast(error.message);
       if (error.status === 409) {
@@ -120,7 +128,7 @@
         '<div class="truck-line"><div class="row"><span>' + esc(line.name) + ' × ' + line.qty + '</span><b>' + money(line.price*line.qty) + '</b></div>' + (line.note?'<div class="note">' + esc(line.note) + '</div>':'') + '<div class="subtle">' + (line.served?'已出餐':'待出餐') + '</div></div>'
       ).join('') +
       '<div class="row" style="padding:12px 0"><strong>合計</strong><strong class="price">' + money(order.total) + '</strong></div></div><div class="truck-order-actions">' +
-      (!kitchenView ? (paid ? '<span class="status done">結帳完成</span>' : '<button class="btn small" data-checkout="' + esc(order.id) + '">流水號結帳</button>') : '<span class="subtle">勾選餐點更新出餐狀態</span>') +
+      (!kitchenView ? (paid ? '<span class="status done">結帳完成</span>' : '<button class="btn small" data-checkout="' + esc(order.id) + '">取餐號碼結帳</button>') : '<span class="subtle">勾選餐點更新出餐狀態</span>') +
       '<button class="btn small danger" data-truck-delete="' + esc(order.id) + '">移除訂單</button></div></article>';
   }
 
