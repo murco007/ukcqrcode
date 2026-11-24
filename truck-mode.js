@@ -140,7 +140,7 @@
         '<div class="truck-line"><div class="row"><span>' + esc(line.name) + ' × ' + line.qty + '</span><b>' + money(line.price*line.qty) + '</b></div>' + (line.note?'<div class="note">' + esc(line.note) + '</div>':'') + '<div class="subtle">' + (line.served?'已出餐':'待出餐') + '</div></div>'
       ).join('') +
       '<div class="row" style="padding:12px 0"><strong>合計</strong><strong class="price">' + money(order.total) + '</strong></div></div><div class="truck-order-actions">' +
-      (!kitchenView ? (paid ? '<span class="status done">結帳完成</span>' : '<button class="btn small" data-checkout="' + esc(order.id) + ''>"+(order.preorder_channel === 'phone' ? '電話預購結帳' : '取餐號碼結帳')+'</button>') : '<span class="subtle">勾選餐點更新出餐狀態</span>') +
+      (!kitchenView ? (paid ? '<span class="status done">結帳完成</span>' : '<button class="btn small" data-checkout="' + esc(order.id) + '">' + (order.preorder_channel === 'phone' ? '電話預購結帳' : '取餐號碼結帳') + '</button>') : '<span class="subtle">勾選餐點更新出餐狀態</span>') +
       '<button class="btn small danger" data-truck-delete="' + esc(order.id) + '">移除訂單</button></div></article>';
   }
 
