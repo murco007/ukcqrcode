@@ -1,0 +1,174 @@
+/* 碗粿張餐車版：以桌號點餐，支援前台、廚房與營運管理。 */
+(() => {
+  table = 1; // 舊版購物車元件會檢查 table；畫面與 API 都不顯示／使用桌號。
+  const style = document.createElement('style');
+  style.textContent = `
+    .truck-orders{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}
+    .truck-order{min-width:0;background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+    .truck-order-head{padding:15px;background:#edf3eb;display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+    .truck-order-head strong{font-size:24px;line-height:1.25;color:var(--green)}
+    .truck-order-body{padding:6px 16px}
+    .truck-line{padding:12px 0;border-bottom:1px solid var(--line)}
+    .truck-order-actions{padding:12px 16px;display:flex;gap:8px;justify-content:flex-end;border-top:1px solid var(--line)}
+    .truck-slot{font-size:12px;color:var(--muted)}
+    .truck-order .serve-line{padding:12px 0}
+    .truck-empty{grid-column:1/-1}
+    .truck-confirm{border:2px solid var(--green);border-radius:14px;padding:18px;background:#f4f8f3}
+    .truck-confirm-number{font-size:34px;font-weight:800;color:var(--green)}
+    @media(max-width:1000px){.truck-orders{grid-template-columns:repeat(3,minmax(0,1fr))}}
+    @media(max-width:700px){.truck-orders{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.truck-order-head{padding:12px}.truck-order-body{padding:4px 12px}.truck-order-head strong{font-size:20px}}
+    @media(max-width:420px){.truck-orders{grid-template-columns:1fr}}
+  `;
+  document.head.appendChild(style);
+
+  const ticketPrefix = 'ukcqrcode-truck-ticket-v1:' + rootUrl.pathname + ':';
+  const recentTickets = new Set();
+
+  function rememberTicket(serial) {
+    if (!Number.isSafeInteger(serial) || serial < 1) return;
+    recentTickets.add(serial);
+    try { localStorage.setItem(ticketPrefix + serial, '1'); } catch {}
+  }
+
+  function savedTickets() {
+    const tickets = new Set(recentTickets);
+    try {
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (!key?.startsWith(ticketPrefix)) continue;
+        const serial = Number(key.slice(ticketPrefix.length));
+        if (Number.isSafeInteger(serial) && serial > 0) tickets.add(serial);
+      }
+    } catch {}
+    return [...tickets].sort((a, b) => b - a);
+  }
+
+  function showSavedTickets() {
+    const tickets = savedTickets();
+    modal('<h2>我的流水號</h2><p>此瀏覽器保存的送單紀錄</p>' +
+      (tickets.length ? '<ul>' + tickets.map(serial => '<li><strong>' + String(serial).padStart(4, '0') + '</strong></li>').join('') + '</ul>' :
+        '<p>目前沒有已儲存的流水號。</p>') +
+      '<div class="modal-actions"><button class="btn" data-action="close">關閉</button></div>');
+  }
+
+  header = function () {
+    return '<header class="app-header"><a class="brand" href="/"><span class="seal">湯</span><div><strong>碗粿張</strong><small>餐車版 QR 點餐</small></div></a><div class="header-right">' +
+      (path === '/' ? '<button type="button" class="btn small secondary" data-truck-tickets>我的流水號</button>' : '<span class="subtle">餐車營運管理</span>' + connection() + '<button class="link-button" data-action="logout">登出</button>') +
+      '</div></header>';
+  };
+
+  billTitle = b => '流水號 ' + String(b.serial ?? b.id ?? '').padStart(4, '0');
+
+  cartContent = function () {
+    return '<div class="cart-head"><h2>我的點餐清單</h2>' +
+      (state.drawer ? '<button class="link-button" data-action="drawer">關閉</button>' : '') +
+      '</div>' +
+      (state.cart.length ? state.cart.map((x, i) =>
+        '<div class="cart-item"><strong>' + esc(x.name) + '</strong><div class="row"><div class="qty"><button aria-label="減少" data-qty="' + i + '" data-delta="-1">−</button><span>' + x.qty + '</span><button aria-label="增加" data-qty="' + i + '" data-delta="1">+</button></div><b>' + money(x.price * x.qty) + '</b></div><button class="link-button" data-note="' + i + '">' + (x.note ? '備註：' + esc(x.note) : '新增餐點備註') + '</button></div>'
+      ).join('') : '<div class="cart-empty"><span class="empty-icon">🍲</span><strong>還沒有選餐</strong>請從餐點清單加入餐點</div>') +
+      '<div class="cart-total row"><span>合計</span><strong class="price">' + money(cartTotal()) + '</strong></div>' +
+      '<button class="btn" data-action="submit" ' + (state.cloudReady === false || !state.cart.length || busy || !state.online ? 'disabled' : '') + '>' + (busy ? '送單中…' : '送出訂單') + '</button>' +
+      '<div class="cart-note">送單後請記下畫面上的流水號，至櫃檯依號結帳。</div>' +
+      (state.cart.length ? '' : '');
+  };
+
+  renderGuest = function () {
+    document.body.classList.add('guest-ordering');
+    const count = state.cart.reduce((sum, item) => sum + item.qty, 0);
+    $('#app').innerHTML = header() +
+      (state.cloudReady === false ? '<div role="status" style="padding:16px;text-align:center;background:#fff1d6;color:#704812;font-size:18px">系統準備中，暫時不能送出訂單。</div>' : '') +
+      '<div class="guest-layout"><aside class="categories"><div class="eyebrow">MENU</div><h3>選擇餐點</h3><div class="category-picker"><label for="category-choice">餐點分類</label><select id="category-choice">' +
+      categories.map(c => '<option value="' + esc(c) + '"' + (state.category === c ? ' selected' : '') + '>' + esc(c) + '</option>').join('') +
+      '</select></div><div class="category-foot">選好餐點後送出訂單，記下流水號，再至櫃檯結帳。</div></aside><main>' +
+      '<section class="hero"><div class="hero-copy"><div class="eyebrow">SOUP MASTER FOOD TRUCK</div><h1>碗粿張餐車版<br>QR 點餐</h1><p>選好餐點・送出訂單・依流水號結帳</p><span class="pill" style="display:inline-block;margin-top:13px;background:#ffffffa8;font-size:12px">送單後請記下自己的流水號</span></div><img src="https://tb-static.uber.com/prod/image-proc/processed_images/74363da08811b237f69d99b887897bfd/a19bb09692310dfd41e49a96c424b3a6.jpeg" alt="碗粿張燉湯"></section>' +
+      '<div class="section-heading"><h2 id="menu-heading">' + esc(state.category) + '</h2><input class="search" id="search" placeholder="搜尋餐點" aria-label="搜尋餐點" value="' + esc(state.query) + '"></div>' +
+      '<div class="menu-grid" id="menu-grid">' + foodCards() + '</div><footer class="developer-credit"><span>碗粿張餐車版 QR 點餐</span></footer></main>' +
+      '<aside id="cart" class="cart ' + (state.drawer ? 'show' : '') + '">' + cartContent() + '</aside></div>' +
+      '<button class="mobile-cart" data-action="drawer"><span>我的點餐清單・' + count + ' 項</span><strong>' + money(cartTotal()) + '</strong></button>';
+  };
+
+  submitOrder = async function () {
+    if (busy || !state.cart.length) return;
+    busy = true; renderGuest();
+    const orderItems = state.cart.map(x => ({ id:x.id, qty:x.qty, note:x.note || '', price:x.price }));
+    try {
+      const result = await api('/api/order', { requestId:newId(), items:orderItems });
+      rememberTicket(result.serial);
+      state.cart = []; persist(); state.drawer = false;
+      modal('<div class="truck-confirm"><h2>訂單已送出</h2><div>請記下您的流水號</div><div class="truck-confirm-number">' + esc(String(result.serial).padStart(4,'0')) + '</div><hr>' +
+        orderItems.map(x => { const p=state.menu.find(y=>y.id===x.id); return '<div class="row"><span>' + esc(p?.name || '') + ' × ' + x.qty + (x.note ? '<div class="note">' + esc(x.note) + '</div>' : '') + '</span><b>' + money((p?.price || x.price) * x.qty) + '</b></div>'; }).join('') +
+        '<div class="row" style="margin-top:14px"><strong>合計</strong><strong>' + money(orderItems.reduce((sum,x)=>sum+x.price*x.qty,0)) + '</strong></div><p class="checkout-reminder">請至櫃檯依流水號結帳</p></div><div class="modal-actions"><button class="btn" data-action="close">完成</button></div>');
+    } catch (error) {
+      toast(error.message);
+      if (error.status === 409) {
+        const latest=await api('/api/menu'); state.menu=latest.menu;
+        state.cart=state.cart.map(x=>({...x,price:latest.menu.find(p=>p.id===x.id)?.price ?? x.price})); persist();
+      }
+    } finally { busy=false; renderGuest(); }
+  };
+
+  function latestOrders() {
+    return grouped().sort((a,b)=>Number(b.serial||0)-Number(a.serial||0)).slice(0,10);
+  }
+
+  function orderCard(order, kitchenView) {
+    const allServed=order.lines.every(line=>Number(line.served)===1 || line.served===true);
+    const paid=order.status==='paid';
+    return '<article class="truck-order"><div class="truck-order-head"><div><strong>' + esc(billTitle(order)) + '</strong><div class="truck-slot">' + time(order.opened_at) + '</div></div><div><span class="status ' + (paid?'done':'') + '">' + (paid?'已結帳':'待結帳') + '</span><br><span class="status ' + (allServed?'done':'') + '">' + (allServed?'已出餐':'製作中') + '</span></div></div><div class="truck-order-body">' +
+      order.lines.map(line => kitchenView ?
+        '<div class="serve-line"><input type="checkbox" id="serve-' + esc(line.line_id) + '" data-serve="' + esc(line.line_id) + '" ' + (line.served?'checked':'') + '><label for="serve-' + esc(line.line_id) + '"><strong class="' + (line.served?'done-name':'') + '">' + esc(line.name) + ' × ' + line.qty + '</strong>' + (line.note?'<div class="note">' + esc(line.note) + '</div>':'') + '</label></div>' :
+        '<div class="truck-line"><div class="row"><span>' + esc(line.name) + ' × ' + line.qty + '</span><b>' + money(line.price*line.qty) + '</b></div>' + (line.note?'<div class="note">' + esc(line.note) + '</div>':'') + '<div class="subtle">' + (line.served?'已出餐':'待出餐') + '</div></div>'
+      ).join('') +
+      '<div class="row" style="padding:12px 0"><strong>合計</strong><strong class="price">' + money(order.total) + '</strong></div></div><div class="truck-order-actions">' +
+      (!kitchenView ? (paid ? '<span class="status done">結帳完成</span>' : '<button class="btn small" data-checkout="' + esc(order.id) + '">流水號結帳</button>') : '<span class="subtle">勾選餐點更新出餐狀態</span>') +
+      '<button class="btn small danger" data-truck-delete="' + esc(order.id) + '">移除訂單</button></div></article>';
+  }
+
+  function orderBoard(kitchenView) {
+    const orders=latestOrders();
+    const title=kitchenView?'廚房出餐':'前台結帳';
+    return pageTop(title,'最新訂單固定顯示在第一格，畫面保留最近 10 張。','<span class="pill">目前 ' + orders.length + ' / 10 張</span>') +
+      '<div class="truck-orders">' + (orders.length ? orders.map(o=>orderCard(o,kitchenView)).join('') : '<div class="panel empty truck-empty"><span class="empty-icon">🍲</span><h3>目前沒有訂單</h3>客人送出訂單後會顯示在這裡。</div>') + '</div>';
+  }
+  cashier = () => orderBoard(false);
+  kitchen = () => orderBoard(true);
+  qrcodes = function () {
+    const cards=[{key:'guest',title:'餐車點餐',href:'/'},{key:'cashier',title:'前台結帳',href:'/cashier'},{key:'kitchen',title:'廚房出餐',href:'/kitchen'}];
+    return pageTop('QR Code','餐車顧客使用第一張 QR Code 點餐。','<button class="btn" data-action="print">列印 QR Code</button>') +
+      '<div class="qr-grid">' + cards.map(c=>{const href=siteHref(c.href),image='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(qrSvg(href));return '<article class="qr-card"><h2>'+c.title+'</h2><img class="qrcode" src="'+image+'" alt="'+c.title+' QR Code"><p>'+esc(href)+'</p><div class="actions"><a class="btn small secondary" href="'+image+'" download="'+c.key+'.svg">下載 SVG</a><a class="btn small ghost" href="'+href+'" target="_blank" rel="noopener">開啟</a></div></article>';}).join('') + '</div>';
+  };
+
+  const baseRefresh=refresh;
+  refresh = async function () {
+    // Do not poll protected endpoints or replace the login form before authentication.
+    if (polling || (path !== '/' && !state.role)) return; polling=true;
+    try {
+      if (path==='/cashier' || path==='/kitchen') {
+        const result=await api('/api/board');
+        if (JSON.stringify(result.rows)!==JSON.stringify(state.rows)) { state.rows=result.rows; if(!$('#modal').innerHTML) render(); }
+      } else if (path==='/') {
+        // 訪客頁不再輪詢桌號；餐點由初次載入取得。
+      } else { polling=false; return baseRefresh(); }
+      if(!state.online){state.online=true;render();}
+    } catch(error) {
+      if(error.status===401&&path!=='/'){state.role=null;render();}
+      else if(state.online){state.online=false;render();}
+    } finally {polling=false;}
+  };
+
+  document.addEventListener('click', async event => {
+    if (path === '/' && event.target.closest('[data-truck-tickets]')) {
+      showSavedTickets();
+      return;
+    }
+    const button=event.target.closest('[data-truck-delete]');
+    if(!button)return;
+    event.preventDefault();event.stopImmediatePropagation();
+    if(!confirm('移除這張訂單的前台與廚房顯示？訂單紀錄仍保留供報表查詢。'))return;
+    try { await api('/api/order/archive',{billId:button.dataset.truckDelete}); await refresh(); render(); }
+    catch(error){toast(error.message);}
+  }, true);
+
+  const originalToast=toast;
+  toast=function(message){return originalToast(message);};
+})();
