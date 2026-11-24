@@ -1,0 +1,651 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#873f2b"><title>碗粿張｜古早味 QR 點餐</title><link rel="icon" type="image/svg+xml" href="./brand-logo.svg">
+<style>
+:root{--green:#873f2b;--dark:#522b22;--mint:#f7ead9;--orange:#ac5b36;--bg:#fbf7ef;--text:#3d3028;--muted:#81776e;--line:#eadfd2}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 "Microsoft JhengHei","PingFang TC",sans-serif}button,input,select,textarea{font:inherit}button,a,input,select,textarea{ -webkit-tap-highlight-color:transparent}button,a{touch-action:manipulation}button{cursor:pointer;border:0}a{color:inherit;text-decoration:none}button:disabled{opacity:.45;cursor:not-allowed}button:focus-visible,a:focus-visible{outline:3px solid #d49250;outline-offset:3px}input,select,textarea{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#fff;color:var(--text);max-width:100%}input:focus,textarea:focus{outline:2px solid #6d9e91}textarea{resize:vertical;width:100%}.app-header{height:88px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);padding:0 4%;background:#fff;gap:20px}.brand{display:flex;align-items:center;gap:12px}.seal{background:var(--green);border-radius:14px;color:#fff;font-family:serif;font-size:29px;line-height:1.1;display:grid;place-content:center;width:52px;height:52px}.brand strong{font:700 26px/1.2 serif;letter-spacing:4px}.brand-logo{width:54px;height:54px;flex:none}.brand small{display:block;font-size:12px;letter-spacing:2px;color:var(--muted);margin-top:5px}.header-right{display:flex;gap:22px;align-items:center}.pill{font-size:14px;padding:6px 13px;border-radius:30px;background:var(--mint);color:var(--green)}.table-badge{background:var(--green);color:white;border-radius:10px;padding:8px 18px;font-weight:700}.subtle{font-size:14px;color:var(--muted)}.btn{display:inline-flex;justify-content:center;align-items:center;gap:8px;padding:11px 20px;border-radius:10px;background:var(--green);color:white;font-weight:600}.btn.secondary{background:white;color:var(--green);border:1px solid var(--line)}.btn.ghost{background:var(--mint);color:var(--green)}.btn.small{padding:6px 12px;font-size:14px}.btn.danger{background:#a23f2d}.guest-layout{max-width:1520px;margin:auto;padding:30px 4% 70px;display:grid;grid-template-columns:158px minmax(0,1fr) 320px;gap:28px}.categories{position:sticky;top:22px;align-self:start}.eyebrow{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600}.categories h3{font-size:15px;margin:14px 0 20px}.category-btn{display:flex;width:100%;text-align:left;align-items:center;gap:12px;padding:13px 14px;border-radius:10px;margin:5px 0;color:#68746e;background:transparent;font-size:15px}.category-btn.active{background:var(--green);color:white}.category-btn span{font-size:21px}.category-btn b{font-weight:500}.category-foot{border-top:1px solid var(--line);padding:24px 10px;margin-top:40px;font-size:13px;color:var(--muted)}.hero{position:relative;border-radius:18px;background:linear-gradient(115deg,#f3dfc3,#f9eedf 55%,#eed0aa);min-height:238px;overflow:hidden;display:flex;align-items:center;padding:30px;margin-bottom:24px}.hero-copy{position:relative;z-index:1;max-width:70%}.hero:after{content:"粿";position:absolute;right:8%;top:50%;transform:translateY(-50%) rotate(7deg);width:190px;height:190px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 50% 42%,#fff8e8 0 44%,#d9a978 45% 50%,#fff0d5 51% 100%);box-shadow:0 12px 30px #8b3f2b22;color:#873f2b;font:700 82px/1 serif;opacity:.92}.hero .eyebrow{color:#557151;font-size:11px}.hero h1{font:700 clamp(27px,2.6vw,38px)/1.5 serif;margin:10px 0;color:#1d4938;letter-spacing:2px}.hero p{font-size:14px;color:#60725b;margin:5px 0}.hero img{position:absolute;right:-13px;top:0;width:46%;height:100%;object-fit:cover;mix-blend-mode:multiply;mask-image:linear-gradient(to right,transparent,#000 30%)}.section-heading{display:flex;align-items:center;justify-content:space-between;margin:22px 0 18px;gap:12px}.section-heading h2{margin:0;font-size:23px;letter-spacing:1px}.search{width:190px;font-size:14px;padding:9px 12px}.menu-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.food-card{border:1px solid var(--line);background:#fff;border-radius:14px;overflow:hidden}.food-image{height:170px;background:#f0f0e9;position:relative;overflow:hidden}.food-image img{width:100%;height:100%;object-fit:cover;transition:transform .3s}.food-card:hover .food-image img{transform:scale(1.04)}.food-image .tag{position:absolute;top:12px;left:12px;font-size:12px;border-radius:5px;background:white;padding:3px 8px;color:#98623e}.food-placeholder{height:100%;display:grid;place-content:center;color:#aaa88e;text-align:center;background:linear-gradient(135deg,#f0f1e8,#e6e9dc)}.food-placeholder span{font-size:48px;font-family:serif}.food-placeholder small{font-size:12px;letter-spacing:2px}.food-body{padding:16px}.food-body h3{font-size:17px;margin:0 0 7px}.food-body p{font-size:13px;color:var(--muted);height:41px;overflow:hidden;margin:0 0 16px;line-height:1.6}.food-bottom{display:flex;align-items:center;justify-content:space-between}.price{font-weight:700;font-size:19px;color:var(--green)}.price small{font-size:12px;margin-right:3px;font-weight:400}.add{border:1px solid #dbe6df;background:var(--mint);border-radius:9px;width:36px;height:36px;color:var(--green);font-size:25px;line-height:1}.sold{font-size:14px;color:#9d5342}.cart{background:white;border:1px solid var(--line);border-radius:16px;padding:23px;position:sticky;top:22px;align-self:start}.cart-head{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);padding-bottom:18px}.cart-head h2{font-size:20px;margin:0}.cart-empty{text-align:center;padding:44px 10px;color:var(--muted);font-size:14px}.empty-icon{font-size:40px;color:#a6b5a7;display:block;margin-bottom:10px}.cart-empty strong{display:block;color:#5f7064;font-size:15px;margin:6px}.cart-item{padding:16px 0;border-bottom:1px solid var(--line);font-size:14px}.cart-item strong{display:block;margin-bottom:8px}.qty{display:inline-flex;align-items:center;gap:13px}.qty button{border:1px solid var(--line);background:#fff;color:var(--green);border-radius:6px;width:28px;height:28px;line-height:1}.row{display:flex;align-items:center;justify-content:space-between;gap:12px}.cart-total{border-top:1px dashed var(--line);padding:18px 0;margin-top:18px}.cart .btn{width:100%}.cart-note{font-size:12px;color:var(--muted);text-align:center;margin-top:12px}.same-table{background:#f5f7f1;border:1px solid #e4e9db;padding:14px;border-radius:10px;font-size:13px;margin-top:20px}.same-table strong{display:block;color:var(--green);margin-bottom:4px}.history{margin-top:26px;border-top:1px solid var(--line);padding-top:18px}.history h3{font-size:15px}.history-line{font-size:13px;padding:8px 0;display:flex;justify-content:space-between;gap:10px}.status{font-size:12px;padding:3px 7px;border-radius:5px;white-space:nowrap;background:#fff3dd;color:#92610f}.status.done{background:var(--mint);color:var(--green)}.mobile-cart{display:none}.admin-layout{display:grid;grid-template-columns:224px 1fr;min-height:calc(100vh - 88px)}.admin-nav{background:#fff;border-right:1px solid var(--line);padding:28px 18px}.admin-nav a{display:flex;gap:12px;padding:13px 16px;margin:5px 0;border-radius:9px;color:#64766e;font-size:15px}.admin-nav a.active{background:var(--green);color:white}.admin-nav .eyebrow{padding:4px 16px 16px}.admin-nav-bottom{margin:40px 16px;font-size:13px;color:var(--muted)}.admin-main{padding:34px clamp(20px,3vw,48px);max-width:1600px;width:100%;margin:auto;align-self:start}.page-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:26px;gap:15px}.page-top h1{font-size:27px;margin:0 0 4px}.page-top p{font-size:14px;color:var(--muted);margin:0}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin:24px 0}.stat{background:#fff;border:1px solid var(--line);border-radius:13px;padding:21px}.stat span{font-size:14px;color:var(--muted)}.stat strong{display:block;font-size:29px;margin:6px 0;color:var(--dark)}.stat small{font-size:12px;color:var(--muted)}.stat:first-child{background:var(--green);color:white}.stat:first-child span,.stat:first-child strong,.stat:first-child small{color:white}.tables-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:15px}.table-card{background:#fff;border:1px solid var(--line);border-radius:13px;min-height:145px;padding:19px;text-align:left;color:var(--text)}.table-card.open{border-color:#95b8a5;background:#f0f6ef}.table-card.selected{outline:2px solid var(--green)}.table-card .num{font-size:27px;display:block}.table-card .subtle{font-size:13px}.table-card strong{display:block;margin-top:12px;color:var(--green)}.panel{background:#fff;border:1px solid var(--line);border-radius:14px;padding:24px;margin-top:22px}.panel h2{margin:0 0 16px;font-size:21px}.empty{text-align:center;padding:45px 20px;color:var(--muted)}.empty h3{color:var(--text);font-size:19px}.kitchen-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}.ticket{background:white;border:1px solid var(--line);border-radius:14px;overflow:hidden}.ticket-head{padding:18px 20px;background:#edf3eb;display:flex;justify-content:space-between;align-items:center}.ticket-head strong{font-size:23px}.ticket-body{padding:8px 20px 18px}.serve-line{display:flex;align-items:flex-start;gap:12px;padding:17px 0;border-bottom:1px solid var(--line)}.serve-line input{width:23px;height:23px;accent-color:var(--green);margin-top:4px;flex-shrink:0}.serve-line label{display:block;flex:1;cursor:pointer}.serve-line .done-name{text-decoration:line-through;color:var(--muted)}.note{color:var(--orange);font-size:13px}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:14px;text-align:left}th{font-weight:500;color:var(--muted);background:#f6f8f3}td,th{padding:13px 15px;border-bottom:1px solid var(--line)}.qr-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}.qr-card{background:white;border:1px solid var(--line);border-radius:14px;padding:24px;text-align:center;break-inside:avoid}.qr-card h2{font:700 25px serif;margin:6px}.qr-card .qrcode{width:190px;height:190px;max-width:100%;display:block;margin:18px auto}.qr-card p{font-size:13px;color:var(--muted);margin:6px 0}.qr-card .actions{display:flex;gap:8px;justify-content:center;margin-top:14px}.login-wrap{max-width:430px;margin:70px auto;padding:32px;background:#fff;border:1px solid var(--line);border-radius:18px;text-align:center}.login-wrap .seal{margin:auto}.login-wrap h1{font-size:25px;margin-bottom:8px}.login-wrap p{font-size:14px;color:var(--muted)}.login-wrap input{display:block;width:100%;margin:20px 0}.login-wrap .btn{width:100%}.error{color:#a43e2b;background:#fff0ea;padding:12px;border-radius:9px;font-size:14px}.connection{font-size:12px;color:var(--muted)}.connection.offline{color:#a43e2b}.form-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;align-items:end}.form-grid label,.field label{display:block;font-size:14px;margin-bottom:6px}.form-grid input,.form-grid select{width:100%}.report-cols{display:grid;grid-template-columns:1.5fr 1fr;gap:20px}.bar-row{margin:15px 0;font-size:14px}.bar-track{background:#edf2e9;border-radius:3px;height:7px;margin-top:8px;overflow:hidden}.bar{background:#6b9784;height:7px}.settings-row{display:grid;grid-template-columns:1fr 120px 100px 80px;gap:16px;align-items:center;border-bottom:1px solid var(--line);padding:15px 0}.settings-row input[type=number]{width:100%}.settings-row label{font-size:14px}.settings-row input[type=checkbox]{accent-color:var(--green);width:18px;height:18px}.modal-backdrop{position:fixed;inset:0;background:#162f2b88;z-index:100;display:flex;align-items:center;justify-content:center;padding:20px}.modal{background:#fff;border-radius:16px;padding:26px;width:460px;max-height:90vh;overflow:auto}.modal h2{margin-top:0;font-size:23px}.modal .field{margin:16px 0}.modal .field input,.modal .field select{width:100%}.modal-actions{display:flex;justify-content:flex-end;gap:12px;margin-top:24px}#toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);z-index:200;background:var(--dark);color:white;padding:13px 24px;border-radius:12px;box-shadow:0 8px 30px #0002;max-width:90%;font-size:15px;display:none}.checkout-reminder{color:#ffd166!important;font-weight:800;font-size:18px}.source-note{font-size:12px;color:var(--muted);margin:26px 0}.link-button{color:var(--green);background:transparent;padding:6px;font-size:14px}.loading{padding:100px 20px;text-align:center;color:var(--muted)}.print-only{display:none}
+@media(min-width:1550px){.menu-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:1150px){.guest-layout{grid-template-columns:130px minmax(0,1fr) 285px;gap:18px;padding:24px}.hero{padding:24px}.hero h1{font-size:28px}.hero-copy{max-width:65%}.food-image{height:150px}.admin-layout{grid-template-columns:190px 1fr}.tables-grid{grid-template-columns:repeat(5,1fr)}.table-card{padding:13px}.kitchen-grid,.qr-grid{grid-template-columns:repeat(2,1fr)}.stats{gap:10px}.stat{padding:16px}.stat strong{font-size:25px}}
+@media(max-width:900px){.guest-layout{grid-template-columns:1fr;padding:20px 20px 100px;gap:0}.categories{position:sticky;top:0;background:var(--bg);z-index:5;padding:8px 0}.categories h3,.categories .eyebrow,.category-foot{display:none}.category-list{display:flex;overflow-x:auto;gap:7px}.category-btn{width:auto;white-space:nowrap;padding:9px 14px;margin:0;font-size:14px}.category-btn span{display:none}.hero{margin-top:16px;min-height:220px}.cart{display:none}.cart.show{display:block;position:fixed;z-index:60;left:12px;right:12px;bottom:12px;top:auto;max-height:87vh;overflow-y:auto;box-shadow:0 0 0 100vmax #163a3388}.mobile-cart{display:flex;position:fixed;bottom:16px;left:20px;right:20px;z-index:20;background:var(--green);color:white;justify-content:space-between;padding:16px 20px;border-radius:12px;box-shadow:0 5px 24px #164f4633}.admin-layout{grid-template-columns:1fr}.admin-nav{display:flex;overflow-x:auto;padding:9px;border-bottom:1px solid var(--line);border-right:0;gap:6px}.admin-nav a{white-space:nowrap;padding:8px 12px;margin:0;font-size:14px}.admin-nav .eyebrow,.admin-nav-bottom{display:none}.admin-main{padding:24px 20px}.form-grid{grid-template-columns:repeat(2,1fr)}.report-cols{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}.tables-grid{grid-template-columns:repeat(5,1fr)}.table-card .num{font-size:22px}.header-right{gap:10px}.header-right .pill{display:none}}
+@media(max-width:560px){.app-header{height:76px;padding:0 18px}.brand strong{font-size:23px}.brand small{font-size:10px}.seal{width:43px;height:43px;font-size:25px;border-radius:10px}.header-right .subtle{display:none}.table-badge{font-size:14px;padding:7px 12px}.hero{padding:23px;min-height:210px}.hero h1{font-size:27px}.hero-copy{max-width:75%}.hero img{width:51%;opacity:.7;right:-40px}.hero p{font-size:12px;max-width:180px}.menu-grid{gap:12px}.food-image{height:135px}.food-body{padding:13px}.food-body h3{font-size:15px;min-height:48px;line-height:1.5}.food-body p{font-size:12px;height:38px;margin-bottom:10px}.price{font-size:18px}.section-heading h2{font-size:21px}.search{width:135px;font-size:13px}.guest-layout{padding:12px 16px 100px}.page-top{align-items:flex-start;flex-wrap:wrap}.page-top h1{font-size:24px}.tables-grid{grid-template-columns:repeat(2,1fr);gap:12px}.table-card{min-height:120px;padding:16px}.kitchen-grid{grid-template-columns:1fr}.qr-grid{grid-template-columns:1fr}.panel{padding:18px}.settings-row{grid-template-columns:1fr 78px 55px 55px;gap:7px;font-size:14px}.settings-row .btn{padding:6px 9px}.settings-row input{padding:8px}.row.wrap{flex-wrap:wrap}.login-wrap{margin:30px 18px}.stats .stat{padding:16px}.stat strong{font-size:24px}}
+/* Mobile ordering: one large dish card per row. */
+@media(max-width:700px){
+ .guest-layout .menu-grid{grid-template-columns:minmax(0,1fr);gap:20px}
+ .guest-layout .food-image{height:auto;aspect-ratio:4/3}
+ .guest-layout .food-body{padding:20px}
+ .guest-layout .food-body h3{font-size:22px;line-height:1.5;min-height:0;margin-bottom:10px;overflow-wrap:anywhere}
+ .guest-layout .food-body p{font-size:16px;line-height:1.7;height:auto;overflow:visible;margin-bottom:18px}
+ .guest-layout .food-body .price{font-size:26px}
+ .guest-layout .food-body .price small{font-size:15px}
+ .guest-layout .food-image .tag{font-size:15px;padding:5px 10px}
+ .guest-layout .food-placeholder span{font-size:64px}
+ .guest-layout .food-placeholder small{font-size:16px}
+ .guest-layout .add{width:48px;height:48px;font-size:32px}
+ .guest-layout .sold{font-size:17px}
+}
+.field{margin:16px 0}.field>input:not([type=checkbox]),.field>select{width:100%}#menu-create-form{max-width:650px}[data-menu-edit]{max-width:650px;padding:12px 0}@media print{body{background:white}.app-header,.admin-nav,.page-top,.stats,.no-print,#toast{display:none!important}.admin-layout{display:block}.admin-main{padding:0;max-width:none}.qr-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12mm}.qr-card{border:1px dashed #aaa;min-height:112mm;padding:10mm;break-inside:avoid}.qr-card .actions{display:none}.qr-card .qrcode{width:52mm;height:52mm}.print-only{display:block;font-size:10px;overflow-wrap:anywhere}.panel{break-inside:avoid}.source-note{display:none}}
+
+.developer-credit{display:flex;align-items:center;justify-content:center;gap:14px;margin:32px 0 12px;padding:22px 12px;border-top:1px solid var(--line);color:#536961;flex-wrap:wrap;text-align:center;font-size:15px;overflow-wrap:anywhere}.developer-credit img{width:112px;height:84px;object-fit:contain;border-radius:9px;flex-shrink:0}.developer-credit strong{display:block;margin-top:5px;font-size:17px;color:var(--green)}@media print{.developer-credit{display:none}}
+
+/* Guest responsive layout, 2026-11-21 */
+.guest-layout{grid-template-columns:minmax(0,1fr) 320px}
+.guest-layout>main,.guest-layout>aside,.guest-layout .food-card,.guest-layout .food-body{min-width:0}
+.guest-layout>.categories{grid-column:1/-1;position:sticky;top:0;z-index:5;background:var(--bg);padding:10px 0}
+.guest-layout>.categories h3,.guest-layout>.categories .eyebrow,.guest-layout>.categories .category-foot{display:none}
+.category-picker{display:flex;align-items:center;gap:12px;min-width:0}
+.category-picker label{font-size:18px;font-weight:700}
+.category-picker select{width:100%;max-width:420px;min-width:0;min-height:50px;font-size:18px}
+.guest-layout .menu-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.guest-layout .food-image{height:auto;aspect-ratio:4/3}
+.guest-layout .food-image img{display:block}
+.guest-layout .food-body h3{font-size:clamp(20px,1.8vw,26px);line-height:1.5;min-height:0;overflow-wrap:anywhere}
+.guest-layout .food-body p{font-size:clamp(16px,1.35vw,19px);height:auto;overflow:visible;overflow-wrap:anywhere}
+.guest-layout .food-bottom{gap:12px;flex-wrap:wrap}
+.guest-layout .add{width:48px;height:48px;flex-shrink:0}
+@media(min-width:1500px){.guest-layout .menu-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:1100px){
+.guest-layout{grid-template-columns:minmax(0,1fr);padding:16px 20px 130px;gap:0}
+.guest-layout .cart{display:none}
+.guest-layout .cart.show{display:block;position:fixed;z-index:60;left:12px;right:12px;bottom:12px;top:auto;max-height:87vh;overflow-y:auto;box-shadow:0 0 0 100vmax #163a3388}
+body.guest-ordering .mobile-cart{display:flex;position:fixed;bottom:16px;left:16px;right:16px;z-index:20;justify-content:space-between;align-items:center;gap:10px;padding:18px;background:var(--green);color:white;border-radius:12px;font-size:18px;flex-wrap:wrap}
+.guest-layout .cart-item,.guest-layout .cart-empty,.guest-layout .history-line{font-size:16px}
+.guest-layout .qty button{width:40px;height:40px}
+}
+@media(max-width:700px){
+.guest-layout{padding:10px 12px 130px}
+.guest-layout .menu-grid{grid-template-columns:minmax(0,1fr);gap:18px}
+.guest-layout .food-body{padding:18px}
+.guest-layout .food-body h3{font-size:clamp(21px,5.5vw,27px)}
+.guest-layout .food-body p{font-size:clamp(16px,4.2vw,19px)}
+.guest-layout .section-heading{flex-wrap:wrap}
+.guest-layout .section-heading .search{width:100%;font-size:16px}
+.category-picker{flex-direction:column;align-items:stretch;gap:6px}
+.category-picker select{max-width:none}
+body.guest-ordering .app-header{height:auto;min-height:76px;padding:12px;gap:8px;flex-wrap:wrap}
+body.guest-ordering .brand{min-width:0;gap:8px}
+body.guest-ordering .brand strong{font-size:clamp(20px,5.5vw,26px);letter-spacing:2px}
+body.guest-ordering .header-right{min-width:0;margin-left:auto}
+.guest-layout .hero{min-height:0;padding:20px 16px}
+.guest-layout .hero-copy{max-width:100%;width:100%}
+.guest-layout .hero h1{font-size:clamp(23px,6.2vw,32px);letter-spacing:1px}
+.guest-layout .hero p{font-size:16px;max-width:none}
+.guest-layout .hero img{opacity:.2;width:60%;right:0}
+.guest-layout .hero .pill{white-space:normal;max-width:100%}
+.guest-layout .cart.show{padding:18px;max-width:calc(100% - 24px)}
+.guest-layout .cart-head{flex-wrap:wrap;gap:8px}
+.guest-layout .cart-item strong,.guest-layout .history-line{overflow-wrap:anywhere}
+body.guest-ordering .modal{width:100%;min-width:0}
+}
+
+.preorder-summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px}.preorder-slots .table-card{min-width:0}.preorder-slots .num{font-size:24px}@media(max-width:600px){.preorder-slots{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.page-title-row{display:flex;align-items:center;gap:16px;flex-wrap:wrap}.page-title-row .btn{flex-shrink:0}
+</style></head><body><div id="app"><div class="loading">正在準備一盅好湯…</div></div><div id="modal"></div><div id="toast" role="status"></div>
+<script src="./cloud.js"></script><script src="./qr.js"></script><script>
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money=n=>'NT$'+Number(n||0).toLocaleString('zh-TW');
+const today=()=>new Date(Date.now()+28800000).toISOString().slice(0,10);
+const time=s=>new Date(s).toLocaleTimeString('zh-TW',{timeZone:'Asia/Taipei',hour:'2-digit',minute:'2-digit',hour12:false});
+const categories=['全部餐點','古早味碗粿','米食主食','湯品小菜'];
+const icons=['◉','粿','🍚','🍲'];
+let path=new URLSearchParams(location.search).get('page')||'/';let table=Number(new URLSearchParams(location.search).get('table'))||0;
+let state={menu:[],role:null,category:'全部餐點',query:'',cart:[],table:null,rows:[],preorderRows:[],preSelected:1,preDrafts:{},preRequests:{},selected:1,report:null,day:today(),online:true,drawer:false};
+let busy=false,checkoutSnapshot=null,pendingOrder=null,polling=false;
+function newId(){const b=new Uint8Array(16);crypto.getRandomValues(b);return Array.from(b,x=>x.toString(16).padStart(2,'0')).join('')}
+try{state.cart=JSON.parse(localStorage.getItem('cart-'+table)||'[]');pendingOrder=JSON.parse(localStorage.getItem('pending-'+table)||'null')}catch{}
+function persist(){localStorage.setItem('cart-'+table,JSON.stringify(state.cart))}
+async function api(url,body){const r=await cloudFetch(url,{method:body?'POST':'GET',headers:body?{'Content-Type':'application/json'}:{},body:body?JSON.stringify(body):undefined});const data=await r.json();if(!r.ok)throw Object.assign(new Error(data.error||'連線失敗'),{status:r.status});return data}
+function toast(s){const t=$('#toast');t.classList.toggle('checkout-reminder',s==='訂單已送到廚房，請先至櫃檯結帳。');t.textContent=s;t.style.display='block';clearTimeout(toast.timer);toast.timer=setTimeout(()=>t.style.display='none',4000)}
+function connection(){return '<span class="connection '+(!state.online?'offline':'')+'">'+(state.online?'每 2.5 秒同步':'連線中斷・重新連線中')+'</span>'}
+function header(){return '<header class="app-header"><a class="brand" href="/"><img class="brand-logo" src="./brand-logo.svg" alt="碗粿張標誌"><div><strong>碗粿張</strong><small>北屯昌平・傳統古早味</small></div></a><div class="header-right">'+(path==='/'?'<span class="pill">掃描 QR Code・輕鬆點餐</span><span class="table-badge">'+(table?'第 '+String(table).padStart(2,'0')+' 桌':'歡迎入座')+'</span>':'<span class="subtle">門市營運管理</span>'+connection()+'<button class="link-button" data-action="logout">登出</button>')+'</div></header>'}
+function adminNav(){return '<nav class="admin-nav"><div class="eyebrow">營運工作台</div>'+[['/cashier','▦','前台結帳'],['/kitchen','♨','廚房出餐'],['/reports','▥','每日營收'],['/qrcodes','▣','桌牌 QR Code'],['/settings','⚙','餐點管理'],['/printing','⎙','列印設定'],['/preorders','☎','電話預購'],['/staff','♙','人員管理'],['/','◉','顧客點餐']].filter(x=>(state.role==='admin'||x[0]==='/printing'||x[0]==='/preorders'||x[0]===(state.role==='kitchen'?'/kitchen':'/cashier'))&&(x[0]!=='/staff'||state.canManageStaff===true)).map(x=>'<a class="'+(path===x[0]?'active':'')+'" href="'+x[0]+'"><span>'+x[1]+'</span>'+x[2]+'</a>').join('')+'<div class="admin-nav-bottom">古早味碗粿・在地好滋味<br>10 桌同步點餐<br>時區：台灣（UTC+8）</div></nav>'}
+
+function staffPage(){
+ if(!state.canManageStaff)return pageTop('無法使用人員管理','僅 murco007 可管理人員。');
+ return pageTop('人員管理','可新增經理、廚房與前台；經理使用帳號密碼，廚房與前台維持免帳號。')+
+ '<section class="panel"><h2>新增人員</h2><form id="staff-create-form" class="form-grid"><div><label for="staff-name">姓名</label><input id="staff-name" name="staffName" required maxlength="60" autocomplete="off"></div><div><label for="staff-role">職務</label><select id="staff-role" name="staffRole"><option value="kitchen">廚房人員</option><option value="cashier">前台人員</option><option value="admin">經理</option></select></div><div id="staff-username-field" hidden><label for="staff-username">經理帳號</label><input id="staff-username" name="staffUsername" minlength="3" maxlength="40" pattern="[A-Za-z0-9][A-Za-z0-9_.-]{2,39}" autocomplete="off" disabled placeholder="3–40 字英數帳號"></div><div><label for="staff-pin">登入密碼</label><input id="staff-pin" name="staffPin" type="password" required minlength="5" maxlength="40" autocomplete="new-password" placeholder="5–40 字"></div><button class="btn" type="submit">新增人員</button></form><p class="subtle">廚房與前台同職務請使用不同密碼。經理須填帳號，且無人員管理權限。密碼不會顯示在清單中。</p></section>'+
+ '<section class="panel"><h2>現有人員</h2><div class="table-wrap"><table><thead><tr><th>姓名</th><th>職務</th><th>操作</th></tr></thead><tbody>'+
+ (state.staff||[]).map(person=>'<tr><td>'+esc(person.name)+(person.username?'<div class="subtle">帳號：'+esc(person.username)+'</div>':'')+'</td><td>'+(person.role==='admin'?'經理':person.role==='kitchen'?'廚房':'前台')+'</td><td>'+(person.id==='owner'?'—':'<button class="btn small danger" data-staff-delete="'+esc(person.id)+'">刪除</button>')+'</td></tr>').join('')+
+ '</tbody></table></div>'+(!(state.staff||[]).length?'<p>尚無人員，請於上方新增。</p>':'')+'</section>';
+}
+
+function render(){if(path==='/'){renderGuest();return}if(!state.role){renderLogin();return}if(state.role!=='admin'&&path!=='/printing'&&path!=='/preorders'&&path!==(state.role==='kitchen'?'/kitchen':'/cashier')){path=state.role==='kitchen'?'/kitchen':'/cashier';history.replaceState(null,'',siteHref(path));}$('#app').innerHTML=header()+'<div class="admin-layout">'+adminNav()+'<main class="admin-main">'+(path==='/kitchen'?kitchen():path==='/qrcodes'?qrcodes():path==='/reports'?reports():path==='/settings'?settings():path==='/staff'?staffPage():path==='/preorders'?preordersPage():path==='/printing'?pageTop('列印設定','連接印表機、測試列印與設定紙張；切換工作台會保留目前連線。')+'<div id="cp-settings-host"></div>':cashier())+'</main></div>';}
+function renderGuest(){document.body.classList.add('guest-ordering');const count=state.cart.reduce((a,x)=>a+x.qty,0);$('#app').innerHTML=header()+(state.cloudReady===false?'<div role="status" style="padding:16px;text-align:center;background:#fff1d6;color:#704812;font-size:18px">系統準備中，目前僅供瀏覽菜單，尚未開放點餐。</div>':'')+'<div class="guest-layout"><aside class="categories"><div class="eyebrow">OUR MENU</div><h3>今天，想吃點什麼？</h3><div class="category-picker"><label for="category-choice">餐點分類</label><select id="category-choice">'+categories.map(c=>'<option value="'+esc(c)+'"'+(state.category===c?' selected':'')+'>'+esc(c)+'</option>').join('')+'</select></div><div class="category-foot">古早味，慢慢吃。<br>碗粿・米食・暖心湯品<br><br>台中市北屯區昌平路周邊<br><a href="https://maps.google.com/?q=24.1651821,120.6940609" target="_blank" rel="noopener">Google 地圖導航</a></div></aside><main><section class="hero"><div class="hero-copy"><div class="eyebrow">TAICHUNG · TRADITIONAL TAIWANESE FOOD</div><h1>一碗古早味，<br>慢慢品台灣。</h1><p>碗粿張，把熟悉的米香端上桌。</p><span class="pill" style="display:inline-block;margin-top:13px;background:#ffffffb8;font-size:12px">傳統碗粿 · 台灣米食 · 暖心湯品</span></div></section>'+(!table?'<div class="panel" style="margin:0 0 20px"><label for="table-choice">請掃描桌上 QR Code，或選擇您的桌號：</label> <select id="table-choice"><option value="">選擇桌號</option>'+Array.from({length:10},(_,i)=>'<option value="'+(i+1)+'">第 '+(i+1)+' 桌</option>').join('')+'</select></div>':'')+'<div class="section-heading"><h2 id="menu-heading">'+state.category+'</h2><input class="search" id="search" placeholder="搜尋餐點" aria-label="搜尋餐點" value="'+esc(state.query)+'"></div><div class="menu-grid" id="menu-grid">'+foodCards()+'</div><p class="source-note">餐點與售價目前為建置用初始範例，店主確認前均不開放點餐；請於後台「餐點管理」核對品項、價格與供應狀態。<br><a href="https://www.facebook.com/profile.php?id=61551696695325" target="_blank" rel="noopener">追蹤碗粿張粉絲專頁</a> ・ <a href="https://maps.google.com/?q=24.1651821,120.6940609" target="_blank" rel="noopener">Google 地圖</a></p></main><aside id="cart" class="cart '+(state.drawer?'show':'')+'">'+cartContent()+'</aside></div><button class="mobile-cart" data-action="drawer"><span>我的點餐袋 · '+count+' 份</span><strong>'+money(cartTotal())+'　查看</strong></button>'}
+function foodCards(){const products=state.menu.filter(p=>(state.category==='全部餐點'||p.category===state.category)&&p.name.includes(state.query));return products.length?products.map(p=>'<article class="food-card"><div class="food-image">'+(p.image?'<img loading="lazy" src="'+esc(imageSource(p))+'" alt="'+esc(p.name)+'">':'<div class="food-placeholder"><span>'+icons[categories.indexOf(p.category)]+'</span><small>'+p.category+'</small></div>')+(p.tag?'<span class="tag">'+p.tag+'</span>':'')+'</div><div class="food-body"><h3>'+esc(p.name)+'</h3><p>'+esc(p.description)+'</p><div class="food-bottom"><span class="price"><small>NT</small>'+money(p.price)+'</span>'+(p.available?'<button class="add" aria-label="加入'+esc(p.name)+'" data-add="'+p.id+'">+</button>':'<span class="sold">暫未上架</span>')+'</div></div></article>').join(''):'<div class="empty">找不到符合的餐點</div>'}
+function cartTotal(){return state.cart.reduce((a,x)=>a+x.price*x.qty,0)}
+function cartContent(){const lines=state.table?.lines||[];return '<div class="cart-head"><h2>我的點餐袋</h2><span class="pill">'+(table?'第 '+String(table).padStart(2,'0')+' 桌':'尚未選桌')+'</span>'+(state.drawer?'<button class="link-button" data-action="drawer">關閉</button>':'')+'</div>'+(state.cart.length?state.cart.map((x,i)=>'<div class="cart-item"><strong>'+esc(x.name)+'</strong><div class="row"><div class="qty"><button aria-label="減少'+esc(x.name)+'" data-qty="'+i+'" data-delta="-1">−</button><span>'+x.qty+'</span><button aria-label="增加'+esc(x.name)+'" data-qty="'+i+'" data-delta="1">+</button></div><b>'+money(x.price*x.qty)+'</b></div><button class="link-button" data-note="'+i+'">'+(x.note?'備註：'+esc(x.note):'新增口味／備註')+'</button></div>').join(''):'<div class="cart-empty"><span class="empty-icon">♨</span><strong>好湯，從這裡開始</strong>選幾道喜歡的餐點<br>暖暖胃，也暖暖心。</div>')+'<div class="cart-total row"><span>本次點餐合計</span><strong class="price">'+money(cartTotal())+'</strong></div><button class="btn" data-action="submit" '+(state.cloudReady===false||!state.cart.length||!table||busy||!state.online?'disabled':'')+'>'+(busy?'正在送出…':'確認送出點餐')+'</button><div class="cart-note">送出後訂單立即送到廚房，請先至櫃檯結帳，無須等待出餐完成</div><div class="same-table"><strong>同桌加點，自動合併</strong>每位客人都能用自己的手機點餐，已送出的餐點將合併在同桌帳單。<br>'+connection()+'</div>'+(lines.length?'<section class="history"><h3>本桌已點餐點 <small class="subtle">'+lines.reduce((a,x)=>a+x.qty,0)+' 份</small></h3>'+lines.map(x=>'<div class="history-line"><span>'+esc(x.name)+' × '+x.qty+(x.note?'<br><small>'+esc(x.note)+'</small>':'')+'</span><span class="status '+(x.served?'done':'')+'">'+(x.served?'已出餐':'準備中')+'</span></div>').join('')+'<div class="row" style="margin-top:14px"><b>本桌待結帳</b><b>'+money(state.table.total)+'</b></div></section>':'');}
+function renderLogin(){const kitchen=path==='/kitchen';$('#app').innerHTML=header()+'<main class="login-wrap"><span class="seal">湯</span><div class="eyebrow" style="margin-top:18px">STAFF ACCESS</div><h1>'+(kitchen?'廚房出餐後台':'前台營運後台')+'</h1><p>請輸入管理員帳號密碼，或留空帳號使用員工密碼。<br>QR Code 只提供入口，後台操作需登入。</p><form id="login-form"><input type="text" id="username" placeholder="管理員帳號（員工免填）" aria-label="管理員帳號" autocomplete="username" maxlength="80"><input type="password" id="pin" placeholder="密碼" aria-label="密碼" autocomplete="current-password" required maxlength="40"><div id="login-error"></div><button class="btn" type="submit">登入後台</button></form><a href="/" class="link-button" style="display:block;margin-top:18px">返回顧客點餐</a></main>'}
+function grouped(rows=state.rows){const m=new Map;rows.forEach(r=>{if(!m.has(r.id))m.set(r.id,{...r,lines:[],total:0});const b=m.get(r.id);b.lines.push(r);b.total+=r.qty*r.price});return [...m.values()]}
+function pageTop(title,desc,extra='',titleAction=''){return '<div class="page-top"><div><div class="eyebrow">TANG DAREN · STORE OPERATIONS</div>'+(titleAction?'<div class="page-title-row"><h1>'+title+'</h1>'+titleAction+'</div>':'<h1>'+title+'</h1>')+'<p>'+desc+'</p></div>'+extra+'</div>'}
+
+function billTitle(b){return b.pickup_code?'預購取餐碼 '+b.pickup_code:'第 '+String(b.table_no).padStart(2,'0')+' 桌';}
+function preorderInfo(b){return b.pickup_code?'<div class="subtle">取餐日：'+esc(b.pickup_date)+' · '+(b.preorder_channel==='web'?'網路':'電話')+'預購'+(b.completed_at?' · 已取餐':'')+'</div>':'';}
+
+function preorderCreateForm(slot){
+ const draft=state.preDrafts[slot]||{pickupCode:'',pickupDate:today(),channel:'phone',items:[]};
+ return '<form id="preorder-create-form"><h2>新增第 '+slot+' 組預購</h2><input name="slot" type="hidden" value="'+slot+'"><div class="form-grid"><div><label>名稱／取餐碼（手機末三碼）</label><input name="pickupCode" inputmode="numeric" pattern="[0-9]{3}" minlength="3" maxlength="3" required value="'+esc(draft.pickupCode)+'" placeholder="例如 007"></div><div><label>取餐日期</label><input name="pickupDate" type="date" required value="'+esc(draft.pickupDate)+'"></div><div><label>預購來源</label><select name="channel"><option value="phone"'+(draft.channel==='phone'?' selected':'')+'>電話</option><option value="web"'+(draft.channel==='web'?' selected':'')+'>網路</option></select></div></div><div class="table-wrap" style="margin-top:20px"><table><thead><tr><th>餐點</th><th>單價</th><th>數量</th></tr></thead><tbody>'+state.menu.filter(p=>p.available).map(p=>'<tr><td>'+esc(p.name)+'</td><td>'+money(p.price)+'</td><td><input data-pre-qty="'+esc(p.id)+'" type="number" min="0" max="20" step="1" value="'+(draft.items.find(x=>x.id===p.id)?.qty||0)+'" aria-label="'+esc(p.name)+'數量" style="width:85px"></td></tr>').join('')+'</tbody></table></div><div class="row wrap" style="margin-top:20px"><strong id="preorder-total" class="price">'+money(draft.items.reduce((sum,item)=>sum+item.price*item.qty,0))+'</strong><button type="submit" class="btn">建立預購並送單</button></div></form>';
+}
+function readPreorderForm(form){return {slot:Number(form.elements.slot.value),pickupCode:form.elements.pickupCode.value.trim(),pickupDate:form.elements.pickupDate.value,channel:form.elements.channel.value,items:[...form.querySelectorAll('[data-pre-qty]')].map(input=>({id:input.dataset.preQty,qty:Number(input.value),price:state.menu.find(p=>p.id===input.dataset.preQty)?.price})).filter(x=>x.qty>0)};}
+function preordersPage(){
+ const bills=grouped(state.preorderRows),slot=state.preSelected||1,b=bills.find(x=>x.preorder_slot===slot),canEdit=state.role==='admin'||state.role==='cashier';
+ return pageTop('電話預購','10 組預購位置；手動輸入手機末三碼作為取餐碼，前台與廚房同步查看。')+'<div class="tables-grid preorder-slots">'+Array.from({length:10},(_,i)=>{const current=bills.find(x=>x.preorder_slot===i+1);return '<button type="button" class="table-card '+(current?'open ':'')+(slot===i+1?'selected':'')+'" data-pre-slot="'+(i+1)+'"><span class="subtle">第 '+(i+1)+' 組</span><strong class="num">'+(current?esc(current.pickup_code):'空位')+'</strong>'+(current?'<span>'+esc(current.pickup_date)+'</span><span class="status '+(current.status==='paid'?'done':'')+'">'+(current.status==='paid'?'已結帳':'未結帳')+'</span>':'<span class="subtle">可新增預購</span>')+'</button>';}).join('')+'</div><section class="panel">'+(b?
+ '<div class="row wrap"><h2>'+esc(billTitle(b))+'</h2><span class="status '+(b.status==='paid'?'done':'')+'">'+(b.status==='paid'?'已結帳':'未結帳')+'</span></div>'+preorderInfo(b)+
+ (canEdit?'<form id="preorder-update-form" class="form-grid" style="margin:20px 0"><input type="hidden" name="billId" value="'+esc(b.id)+'"><div><label>取餐碼</label><input name="pickupCode" inputmode="numeric" pattern="[0-9]{3}" maxlength="3" required value="'+esc(b.pickup_code)+'"></div><div><label>取餐日期</label><input name="pickupDate" type="date" required value="'+esc(b.pickup_date)+'"></div><div><label>來源</label><select name="channel"><option value="phone"'+(b.preorder_channel==='phone'?' selected':'')+'>電話</option><option value="web"'+(b.preorder_channel==='web'?' selected':'')+'>網路</option></select></div><button type="submit" class="btn secondary">更新取餐資料</button></form>':'')+
+ '<div class="table-wrap"><table><thead><tr><th>餐點</th><th>數量</th><th>小計</th><th>出餐</th></tr></thead><tbody>'+b.lines.map(x=>'<tr><td>'+esc(x.name)+(x.note?'<div class="note">'+esc(x.note)+'</div>':'')+'</td><td>'+x.qty+'</td><td>'+money(x.price*x.qty)+'</td><td>'+(state.role==='kitchen'||state.role==='admin'?'<input type="checkbox" data-serve="'+esc(x.line_id)+'" aria-label="'+esc(x.name)+'已出餐" '+(x.served?'checked':'')+'>':(x.served?'已出餐':'準備中'))+'</td></tr>').join('')+'</tbody></table></div>'+
+ '<div class="row wrap" style="margin-top:22px"><strong class="price">'+money(b.total)+'</strong><div class="actions">'+(state.role!=='cashier'?'<button type="button" class="btn secondary" data-pre-print="'+esc(b.id)+'" data-pre-kind="kitchen">列印點餐單</button> ':'')+(state.role!=='kitchen'?'<button type="button" class="btn secondary" data-pre-print="'+esc(b.id)+'" data-pre-kind="receipt">'+(b.status==='paid'?'重印結帳清單':'列印消費明細')+'</button> ':'')+(canEdit&&b.status==='open'?'<button class="btn" type="button" data-checkout="'+esc(b.id)+'">確認收款結帳</button>':'')+'</div></div>'+
+ (canEdit?'<div style="margin-top:20px"><button class="btn secondary" type="button" data-pre-complete="'+esc(b.id)+'" '+(b.status!=='paid'||b.lines.some(x=>!x.served)?'disabled':'')+'>已取餐，釋出此組</button><p class="subtle">完成結帳及出餐後，可確認取餐；歷史訂單與營收會保留。</p></div>':''):
+ canEdit?preorderCreateForm(slot):'<div class="empty">此組尚無預購，請由前台新增。</div>')+'</section>';
+}
+
+function kitchen(){const bills=grouped();const pending=state.rows.filter(x=>!x.served);return pageTop('廚房出餐','結帳後保留餐點；可手動移除顯示，同桌加點或新單會重新顯示。','<div class="actions"><button type="button" class="btn secondary small" data-kitchen-restore="1">恢復已移除顯示</button><span class="pill">待出 '+pending.reduce((a,x)=>a+x.qty,0)+' 份餐點</span></div>')+'<div class="kitchen-grid">'+(bills.length?bills.map(b=>'<section class="ticket"><div class="ticket-head"><strong>'+esc(billTitle(b))+'</strong><div><span class="status '+(b.status==='paid'?'done':'')+'" style="'+(b.status==='paid'?'':'background:#fff0ed;color:#b42318;font-weight:800')+'">'+(b.status==='paid'?'已結帳':'未結帳')+'</span> <span class="status '+(b.lines.every(x=>x.served)?'done':'')+'">'+(b.lines.every(x=>x.served)?'全部已出':'待出餐')+'</span><div class="subtle">'+time(b.opened_at)+' 開單</div>'+preorderInfo(b)+'</div></div><div class="ticket-body">'+b.lines.map(x=>'<div class="serve-line"><input type="checkbox" id="serve-'+x.line_id+'" data-serve="'+x.line_id+'" '+(x.served?'checked':'')+(b.completed_at?' disabled':'')+'><label for="serve-'+x.line_id+'"><strong class="'+(x.served?'done-name':'')+'">'+esc(x.name)+' × '+x.qty+'</strong>'+(x.note?'<div class="note">'+esc(x.note)+'</div>':'')+'<div class="subtle">'+time(x.created_at)+' 送單</div></label></div>').join('')+'</div><div style="padding:12px 20px;border-top:1px solid var(--line);text-align:right"><button type="button" class="btn small secondary" data-hide-kitchen="'+esc(b.id)+'" data-hide-count="'+b.lines.length+'">移除顯示</button></div></section>').join(''):'<div class="panel empty" style="grid-column:1/-1"><span class="empty-icon">♨</span><h3>目前沒有待處理訂單</h3>客人送單後，各桌餐點將自動顯示在這裡。</div>')+'</div>'}
+function cashier(){const bills=grouped(),selected=bills.find(b=>b.table_no===state.selected);const pending=state.rows.filter(x=>!x.served).reduce((a,x)=>a+x.qty,0);return pageTop('前台結帳','餐點未出齊也可先結帳，請確認實際收款。','<span class="pill">'+today().replaceAll('-',' / ')+'</span>','<button class="btn secondary small" type="button" data-pre-open="1">開啟預購頁面</button>')+'<div class="stats"><div class="stat"><span>目前待收款</span><strong>'+money(bills.reduce((a,b)=>a+b.total,0)+grouped(state.preorderRows).filter(b=>b.status==='open').reduce((sum,b)=>sum+b.total,0))+'</strong><small>僅含未結帳帳單</small></div><div class="stat"><span>用餐桌數</span><strong>'+bills.length+' <small>/ 10 桌</small></strong><small>多人點餐合併帳單</small></div><div class="stat"><span>待出餐份數</span><strong>'+pending+'</strong><small>廚房勾選後同步更新</small></div><div class="stat"><span>已出齊桌數</span><strong>'+bills.filter(b=>b.lines.every(x=>x.served)).length+'</strong><small>可確認收款結帳</small></div></div>'+'<div class="section-heading"><h2>門市桌況</h2><span class="subtle">點選桌號查看帳單</span></div><div class="tables-grid">'+Array.from({length:10},(_,i)=>{const b=bills.find(x=>x.table_no===i+1);return '<button class="table-card '+(b?'open ':'')+(state.selected===i+1?'selected':'')+'" data-table="'+(i+1)+'"><div class="row"><span class="num">'+String(i+1).padStart(2,'0')+'</span><span class="status '+(!b||b.lines.every(x=>x.served)?'done':'')+'">'+(!b?'空桌':b.lines.every(x=>x.served)?'已出齊':'備餐中')+'</span></div><span class="subtle">'+(b?b.lines.reduce((a,x)=>a+x.qty,0)+' 份餐點':'等待入座')+'</span><strong>'+money(b?.total)+'</strong></button>'}).join('')+'</div><section class="panel">'+(selected?'<div class="row wrap"><h2>第 '+String(selected.table_no).padStart(2,'0')+' 桌・消費明細</h2><span class="subtle">'+time(selected.opened_at)+' 開單</span></div><div class="table-wrap"><table><thead><tr><th>餐點</th><th>數量</th><th>小計</th><th>出餐狀態</th></tr></thead><tbody>'+selected.lines.map(x=>'<tr><td>'+esc(x.name)+(x.note?'<div class="note">'+esc(x.note)+'</div>':'')+'</td><td>'+x.qty+'</td><td>'+money(x.price*x.qty)+'</td><td><span class="status '+(x.served?'done':'')+'">'+(x.served?'已出餐':'準備中')+'</span></td></tr>').join('')+'</tbody></table></div><div class="row wrap" style="margin-top:22px"><div><span class="subtle">應收總額</span><div class="price" style="font-size:29px">'+money(selected.total)+'</div></div><button class="btn" data-checkout="'+selected.id+'" >確認收款結帳</button></div>':'<div class="empty"><h3>第 '+String(state.selected).padStart(2,'0')+' 桌目前為空桌</h3>掃描桌牌即可開始點餐，無需手動開桌。</div>')+'</section>'}
+function qrcodes(){const cards=Array.from({length:10},(_,i)=>({key:'table-'+(i+1),title:'第 '+String(i+1).padStart(2,'0')+' 桌',href:'/?table='+(i+1)})).concat([{key:'kitchen',title:'廚房出餐',href:'/kitchen'},{key:'cashier',title:'前台結帳',href:'/cashier'}]);return pageTop('桌牌 QR Code','桌牌會使用目前 GitHub Pages 網址，列印前請確認網址。','<button class="btn" data-action="print">列印全部桌牌</button>')+'<div class="qr-grid">'+cards.map(c=>{const href=siteHref(c.href);const image='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(qrSvg(href));return '<article class="qr-card"><h2>'+c.title+'</h2><img class="qrcode" src="'+image+'" alt="'+c.title+' QR Code"><p>碗粿張・同桌一起點</p><div class="print-only">'+esc(href)+'</div><div class="actions"><a class="btn small secondary" href="'+image+'" download="'+c.key+'.svg">下載 SVG</a><a class="btn small ghost" href="'+href+'" target="_blank" rel="noopener">開啟入口</a></div></article>';}).join('')+'</div>';}
+function reports(){const r=state.report;return pageTop('每日營收記帳','以台灣日期歸帳；結帳收款後，營收自動入帳。','<div class="row"><input type="date" id="report-day" aria-label="營收日期" value="'+state.day+'"><a class="btn secondary" href="/api/export?day='+state.day+'">匯出 CSV</a></div>')+(r?'<div class="stats"><div class="stat"><span>本日實收營收</span><strong>'+money(r.revenue)+'</strong><small>已結帳 '+r.bills.length+' 筆</small></div><div class="stat"><span>本日支出</span><strong>'+money(r.expense)+'</strong><small>已登錄 '+r.expenses.length+' 筆</small></div><div class="stat"><span>營收扣除支出</span><strong>'+money(r.revenue-r.expense)+'</strong><small>非正式會計損益</small></div><div class="stat"><span>平均每筆消費</span><strong>'+money(r.bills.length?Math.round(r.revenue/r.bills.length):0)+'</strong><small>實收營收 ÷ 結帳筆數</small></div></div><div class="report-cols"><section class="panel" style="margin-top:0"><h2>收款紀錄</h2><div class="table-wrap"><table><thead><tr><th>時間／帳單</th><th>桌號／取餐碼</th><th>付款</th><th>金額</th></tr></thead><tbody>'+r.bills.map(b=>'<tr><td>'+time(b.paid_at)+'<div class="subtle">'+b.id+'</div></td><td>'+esc(b.pickup_code?'預購 '+b.pickup_code:String(b.table_no))+'</td><td>'+esc(b.payment)+'</td><td>'+money(b.total)+'</td></tr>').join('')+'</tbody></table></div>'+(!r.bills.length?'<div class="empty">本日尚無結帳紀錄</div>':'')+'</section><section class="panel" style="margin-top:0"><h2>餐點銷售排行</h2>'+r.sales.map(s=>'<div class="bar-row"><div class="row"><span>'+esc(s.name)+'</span><b>'+s.quantity+' 份</b></div><div class="bar-track"><div class="bar" style="width:'+Math.round(s.quantity/Math.max(...r.sales.map(x=>x.quantity),1)*100)+'%"></div></div></div>').join('')+(!r.sales.length?'<div class="empty">尚無餐點銷售紀錄</div>':'')+'</section></div>':'<div class="loading">讀取營收資料中…</div>')+'<section class="panel"><h2>登錄日常支出</h2><form id="expense-form" class="form-grid"><div><label for="expense-category">支出分類</label><select id="expense-category">'+['食材','人事','租金','水電','其他'].map(x=>'<option>'+x+'</option>').join('')+'</select></div><div><label for="expense-amount">金額（元）</label><input id="expense-amount" type="number" required min="1" max="9999999" step="1" placeholder="0"></div><div><label for="expense-note">備註</label><input id="expense-note" maxlength="200" placeholder="例如：今日蔬菜進貨"></div><button class="btn" type="submit">新增支出</button></form>'+(r?.expenses.length?'<div class="table-wrap" style="margin-top:20px"><table><thead><tr><th>分類</th><th>備註</th><th>金額</th></tr></thead><tbody>'+r.expenses.map(e=>'<tr><td>'+esc(e.category)+'</td><td>'+esc(e.note)+'</td><td>'+money(e.amount)+'</td></tr>').join('')+'</tbody></table></div>':'')+'</section>'}
+function imageSource(p){return p.image?.startsWith('data:')||p.image?.startsWith('https://')?p.image:'https://tb-static.uber.com/prod/image-proc/processed_images/'+p.image+'.jpeg'}
+function menuFields(p={}){return '<div class="field"><label>餐點名稱</label><input name="name" aria-label="餐點名稱" maxlength="80" value="'+esc(p.name||'')+'" required></div><div class="field"><label>分類</label><select name="category">'+categories.slice(1).map(c=>'<option '+(c===p.category?'selected':'')+'>'+c+'</option>').join('')+'</select></div><div class="field"><label>價格（元）</label><input name="price" aria-label="價格" type="number" min="0" max="99999" step="1" value="'+(p.price??'')+'" required></div><div class="field"><label>餐點說明</label><textarea name="description" maxlength="500">'+esc(p.description||'')+'</textarea></div><div class="field"><label>圖片網址（HTTPS）</label><input name="image" aria-label="圖片網址" value="'+esc(p.image||'')+'" placeholder="可貼上網址，或在下方上傳照片"></div><div class="field"><label>上傳餐點照片</label><input name="photo" type="file" accept="image/jpeg,image/png,image/webp"><small class="subtle">選擇照片會自動縮圖儲存；上傳照片優先於網址。</small></div>'+(p.image?'<img src="'+esc(imageSource(p))+'" alt="'+esc(p.name)+'" style="width:160px;height:120px;object-fit:cover;border-radius:10px">':'')+'<div class="field"><label><input type="checkbox" name="available" '+(p.available!==false?'checked':'')+'> 供應中</label></div><button class="btn" type="submit">'+(p.id?'儲存修改':'新增餐點')+'</button>'}
+function settings(){return pageTop('餐點管理','自行新增餐點、照片與價格；已送出的訂單保留原始名稱與價格。')+'<section class="panel" style="margin-top:0"><h2>新增餐點</h2><form id="menu-create-form">'+menuFields()+'</form></section><section class="panel"><h2>現有餐點（'+state.menu.length+' 項）</h2>'+state.menu.map(p=>'<details style="border-bottom:1px solid var(--line);padding:16px 0"><summary style="cursor:pointer;font-size:18px">'+esc(p.name)+' · '+money(p.price)+' · '+(p.available?'供應中':'已停售')+'</summary><form data-menu-edit="'+esc(p.id)+'">'+menuFields(p)+'</form><button type="button" class="btn danger" data-menu-delete="'+esc(p.id)+'">刪除餐點</button></details>').join('')+'</section>'}
+async function photoData(file){if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>15*1024*1024)throw Error('請選擇 15MB 以內的 JPG、PNG 或 WebP 圖片。');const bitmap=await createImageBitmap(file);const ratio=Math.min(1,1000/Math.max(bitmap.width,bitmap.height));const canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(bitmap.width*ratio));canvas.height=Math.max(1,Math.round(bitmap.height*ratio));canvas.getContext('2d').drawImage(bitmap,0,0,canvas.width,canvas.height);bitmap.close();let data=canvas.toDataURL('image/jpeg',.8);if(data.length>700000)data=canvas.toDataURL('image/jpeg',.5);if(data.length>700000)throw Error('圖片過大，請選擇較小的照片。');return data;}
+
+async function refresh(){if(polling)return;polling=true;try{if(path==='/'){if(table){const next=await api('/api/table?table='+table);const changed=JSON.stringify(next)!==JSON.stringify(state.table);if(state.table&&next.generation!==state.table.generation){toast('本桌已結帳。新點餐將建立新帳單。');pendingOrder=null;localStorage.removeItem('pending-'+table)}state.table=next;if(changed&&$('#cart'))$('#cart').innerHTML=cartContent();}}else if(state.role){if(path==='/kitchen'||path==='/cashier'){let preChanged=false;if(path==='/cashier'){const next=(await api('/api/preorders')).rows;preChanged=JSON.stringify(next)!==JSON.stringify(state.preorderRows);state.preorderRows=next;}const r=await api('/api/board'+(path==='/kitchen'?'?view=kitchen':''));if(preChanged||JSON.stringify(r.rows)!==JSON.stringify(state.rows)){state.rows=r.rows;if(!$('#modal').innerHTML)render();}}else if(path==='/preorders'){const next=(await api('/api/preorders')).rows;if(JSON.stringify(next)!==JSON.stringify(state.preorderRows)){state.preorderRows=next;if(!$('#modal').innerHTML&&!document.activeElement?.closest('#preorder-create-form,#preorder-update-form'))render();}}else if(path==='/reports'){const r=await api('/api/report?day='+state.day);if(JSON.stringify(r)!==JSON.stringify(state.report)){state.report=r;if(!$('#expense-amount')?.value)render()}}}if(!state.online){state.online=true;render();}}catch(e){if(e.status===401&&path!=='/'){state.role=null;render()}else if(state.online){state.online=false;render()}}finally{polling=false}}
+async function load(){try{const r=await api('/api/menu');state.menu=r.menu;state.role=r.role;state.canManageStaff=r.canManageStaff===true;state.displayName=r.displayName||'';state.cloudReady=r.ready!==false;if(path!=='/'&&state.role&&state.role!=='admin'&&path!=='/printing'&&path!=='/preorders'&&path!==(state.role==='kitchen'?'/kitchen':'/cashier')){path=state.role==='kitchen'?'/kitchen':'/cashier';history.replaceState(null,'',siteHref(path));}state.cart=state.cart.filter(x=>r.menu.some(p=>p.id===x.id)&&Number.isInteger(x.qty)&&x.qty>0&&x.qty<=20);if(table<1||table>10)table=0;if(state.role&&(path==='/cashier'||path==='/kitchen'))state.rows=(await api('/api/board'+(path==='/kitchen'?'?view=kitchen':''))).rows;if(state.role&&['/cashier','/preorders'].includes(path))state.preorderRows=(await api('/api/preorders')).rows;if(state.role==='admin'&&path==='/reports')state.report=await api('/api/report?day='+state.day);if(path==='/staff'&&state.canManageStaff)state.staff=(await api('/api/staff')).staff;state.online=true;render();}catch(e){$('#app').innerHTML='<div class="login-wrap"><h1>暫時無法連線</h1><p>'+esc(e.message)+'</p><button class="btn" data-action="reload">重新連線</button></div>'}}
+function modal(content){$('#modal').innerHTML='<div class="modal-backdrop"><section class="modal" role="dialog" aria-modal="true">'+content+'</section></div>';$('#modal input, #modal textarea, #modal button')?.focus()}
+function closeModal(){$('#modal').innerHTML='';checkoutSnapshot=null}
+async function submitOrder(){if(busy||!table||!state.cart.length)return;busy=true;renderGuest();try{if(!pendingOrder){pendingOrder={table,generation:state.table.generation,requestId:newId(),items:state.cart.map(x=>({id:x.id,qty:x.qty,note:x.note||'',price:x.price}))};localStorage.setItem('pending-'+table,JSON.stringify(pendingOrder))}await api('/api/order',pendingOrder);state.cart=[];persist();pendingOrder=null;localStorage.removeItem('pending-'+table);state.drawer=false;toast('訂單已送到廚房，請先至櫃檯結帳。');await refresh()}catch(e){toast(e.message);if(e.status===409){pendingOrder=null;localStorage.removeItem('pending-'+table);const r=await api('/api/menu');state.menu=r.menu;state.cart=state.cart.map(x=>({...x,price:r.menu.find(p=>p.id===x.id)?.price??x.price}));persist();await refresh()}}finally{busy=false;renderGuest()}}
+document.addEventListener('click',async e=>{const b=e.target.closest('button,a');if(!b)return;try{
+if(b.dataset.hideKitchen){
+ const bill=grouped().find(x=>x.id===b.dataset.hideKitchen);
+ if(!bill)return;
+ const pending=bill.lines.some(x=>!x.served);
+ if(!confirm((pending?'此單仍有未出餐餐點。':'')+'確定從廚房移除「'+billTitle(bill)+'」顯示？訂單、結帳與重印紀錄會保留，可用「恢復已移除顯示」找回。'))return;
+ b.disabled=true;try{await api('/api/kitchen-display/hide',{billId:bill.id,expectedCount:Number(b.dataset.hideCount)});await refresh();render();toast('已移除廚房顯示，訂單紀錄保留。');}finally{b.disabled=false;}return;
+}
+if(b.dataset.kitchenRestore){
+ b.disabled=true;try{await api('/api/kitchen-display/restore',{});await refresh();render();toast('已恢復目前各桌可顯示的訂單。');}finally{b.disabled=false;}return;
+}
+
+if(b.dataset.preOpen){state.preSelected=Number(b.dataset.preOpen);path='/preorders';history.pushState(null,'',siteHref(path));await load();return;}
+if(b.dataset.preSlot){state.preSelected=Number(b.dataset.preSlot);render();return;}
+if(b.dataset.preComplete){if(!confirm('確認客人已取餐？此組將可供下一筆預購使用。'))return;b.disabled=true;try{await api('/api/preorders/complete',{billId:b.dataset.preComplete});state.preorderRows=(await api('/api/preorders')).rows;render();toast('已確認取餐，此組可重新使用。');}finally{b.disabled=false;}return;}
+if(b.dataset.staffDelete){if(!state.canManageStaff)throw Error('沒有管理權限');if(!confirm('確定刪除此人員？刪除後密碼與既有登入將無法使用。'))return;b.disabled=true;try{await api('/api/staff/delete',{id:b.dataset.staffDelete});state.staff=(await api('/api/staff')).staff;render();toast('人員已刪除');}finally{b.disabled=false;}return;}if(b.dataset.menuDelete){if(state.role!=='admin')throw Error('沒有管理權限');const item=state.menu.find(x=>x.id===b.dataset.menuDelete);if(!item||!confirm('確定刪除「'+item.name+'」？餐點會從菜單移除，既有訂單與營收明細將保留。'))return;b.disabled=true;try{await api('/api/menu-delete',{id:item.id});state.menu=(await api('/api/menu')).menu;render();toast('餐點已刪除');}finally{b.disabled=false;}return;}if(b.dataset.category){state.category=b.dataset.category;renderGuest()}if(b.dataset.add){if(!table){toast('請先選擇桌號，或掃描桌牌 QR Code。');return}if(pendingOrder){toast('上次送單尚待確認，請先按送出重試。');return}const p=state.menu.find(x=>x.id===b.dataset.add);const found=state.cart.find(x=>x.id===p.id&&!x.note);if(found){if(found.qty>=20){toast('單項上限 20 份');return}found.qty++}else state.cart.push({...p,qty:1,note:''});persist();renderGuest();toast('已加入 '+p.name)}if(b.dataset.qty!==undefined){if(pendingOrder){toast('請先確認上次送單結果。');return}const x=state.cart[Number(b.dataset.qty)];x.qty+=Number(b.dataset.delta);if(x.qty>20)x.qty=20;state.cart=state.cart.filter(x=>x.qty>0);persist();renderGuest()}if(b.dataset.note!==undefined){if(pendingOrder){toast('請先確認上次送單結果。');return}const i=Number(b.dataset.note);modal('<h2>餐點備註</h2><p>'+esc(state.cart[i].name)+'</p><textarea id="item-note" rows="3" maxlength="200" placeholder="例如：不要蔥、醬料另外放">'+esc(state.cart[i].note)+'</textarea><div class="modal-actions"><button class="btn secondary" data-action="close">取消</button><button class="btn" data-save-note="'+i+'">儲存備註</button></div>')}if(b.dataset.saveNote!==undefined){state.cart[Number(b.dataset.saveNote)].note=$('#item-note').value;persist();closeModal();renderGuest()}if(b.dataset.table){state.selected=Number(b.dataset.table);render()}if(b.dataset.checkout){const bill=grouped().find(x=>x.id===b.dataset.checkout)||grouped(state.preorderRows).find(x=>x.id===b.dataset.checkout);checkoutSnapshot={billId:bill.id,expectedTotal:bill.total,expectedCount:bill.lines.length};modal('<h2>'+esc(billTitle(bill))+'・確認收款</h2><p>應收 <strong class="price">'+money(bill.total)+'</strong></p><div class="field"><label for="payment">付款方式（記錄用）</label><select id="payment"><option>現金</option><option>刷卡</option><option>行動支付</option></select></div><div class="field"><label for="received">實收金額</label><input id="received" type="number" min="'+bill.total+'" step="1" value="'+bill.total+'"></div><p class="subtle">請確認已實際收到款項。完成後會結束本桌帳單，並計入每日營收。</p><div class="modal-actions"><button class="btn secondary" data-action="close">返回確認</button><button class="btn" data-action="pay">已收款，完成結帳</button></div>')}switch(b.dataset.action){case 'submit':await submitOrder();break;case 'drawer':state.drawer=!state.drawer;renderGuest();break;case 'close':closeModal();break;case 'print':window.print();break;case 'reload':await load();break;case 'logout':await api('/api/logout',{});state.role=null;render();break;case 'pay':b.disabled=true;try{const r=await api('/api/checkout',{...checkoutSnapshot,payment:$('#payment').value,received:Number($('#received').value)});closeModal();toast('結帳完成，找零 '+money(r.change));await refresh();render()}catch(err){closeModal();await refresh();render();throw err}break}}catch(err){toast(err.message)}});
+document.addEventListener('input',e=>{const preForm=e.target.closest('#preorder-create-form');if(preForm){const draft=readPreorderForm(preForm);state.preDrafts[draft.slot]=draft;const total=$('#preorder-total');if(total)total.textContent=money(draft.items.reduce((sum,item)=>sum+item.price*item.qty,0));}if(e.target.id==='search'){state.query=e.target.value;$('#menu-grid').innerHTML=foodCards()}});
+document.addEventListener('change',async e=>{try{if(e.target.id==='staff-role'){const manager=e.target.value==='admin',field=$('#staff-username-field'),input=$('#staff-username');field.hidden=!manager;input.disabled=!manager;input.required=manager;if(!manager)input.value='';}if(e.target.id==='category-choice'){state.category=e.target.value;renderGuest();}if(e.target.id==='table-choice'&&e.target.value)location.href=siteHref('/?table='+e.target.value);if(e.target.dataset.serve){const c=e.target;c.disabled=true;await api('/api/serve',{id:c.dataset.serve,served:c.checked});await refresh();render()}if(e.target.id==='report-day'){state.day=e.target.value;state.report=await api('/api/report?day='+state.day);render()}}catch(err){toast(err.message);render()}});
+document.addEventListener('submit',async e=>{e.preventDefault();const f=e.target,btn=f.querySelector('button[type=submit]');if(btn)btn.disabled=true;try{
+if(f.id==='preorder-create-form'){
+ const body=readPreorderForm(f);if(!body.items.length)throw Error('請至少選擇一項餐點。');
+ const serialized=JSON.stringify(body),prior=state.preRequests[body.slot];
+ const requestId=prior?.serialized===serialized?prior.requestId:crypto.randomUUID();
+ state.preRequests[body.slot]={serialized,requestId};
+ await api('/api/preorders/create',{...body,requestId});delete state.preDrafts[body.slot];delete state.preRequests[body.slot];
+ state.preorderRows=(await api('/api/preorders')).rows;render();toast('預購已建立，取餐碼 '+body.pickupCode+'。');
+}
+if(f.id==='preorder-update-form'){
+ await api('/api/preorders/update',{billId:f.elements.billId.value,pickupCode:f.elements.pickupCode.value.trim(),pickupDate:f.elements.pickupDate.value,channel:f.elements.channel.value});
+ state.preorderRows=(await api('/api/preorders')).rows;render();toast('取餐資料已更新。');
+}
+if(f.id==='staff-create-form'){if(!state.canManageStaff)throw Error('沒有管理權限');await api('/api/staff/save',{name:f.elements.staffName.value.trim(),role:f.elements.staffRole.value,username:f.elements.staffRole.value==='admin'?f.elements.staffUsername.value.trim():undefined,pin:f.elements.staffPin.value});f.elements.staffPin.value='';state.staff=(await api('/api/staff')).staff;render();toast('人員已新增');}if(f.id==='login-form'){await api('/api/login',{role:path==='/kitchen'?'kitchen':'cashier',username:$('#username').value.trim(),pin:$('#pin').value});await load()}if(f.id==='expense-form'){await api('/api/expense',{day:state.day,category:$('#expense-category').value,amount:Number($('#expense-amount').value),note:$('#expense-note').value});state.report=await api('/api/report?day='+state.day);render();toast('支出已記帳')}if(f.id==='menu-create-form'||f.dataset.menuEdit){const file=f.elements.photo.files[0];const image=file?await photoData(file):f.elements.image.value.trim();await api('/api/menu-save',{id:f.dataset.menuEdit||undefined,name:f.elements.name.value.trim(),category:f.elements.category.value,description:f.elements.description.value,image,price:Number(f.elements.price.value),available:f.elements.available.checked});state.menu=(await api('/api/menu')).menu;render();toast('餐點已儲存，顧客重新整理即可看到')}if(f.dataset.menuForm){await api('/api/menu-update',{id:f.dataset.menuForm,price:Number(f.elements.price.value),available:f.elements.available.checked});state.menu=(await api('/api/menu')).menu;toast('菜單已更新')}}catch(err){if(f.id==='login-form')$('#login-error').innerHTML='<p class="error">'+esc(err.message)+'</p>';else toast(err.message)}finally{if(btn)btn.disabled=false}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+window.__startTruckApp=()=>{load();setInterval(refresh,2500)};
+</script><script data-staff-fullscreen="v1">
+(function () {
+  var button = null;
+  function active() { return document.fullscreenElement || document.webkitFullscreenElement || document.webkitCurrentFullScreenElement; }
+  function notify(text) {
+    if (typeof toast === 'function') toast(text);
+    else window.alert(text);
+  }
+  function sync() {
+    var visible = !!document.querySelector('.admin-main, .login-wrap');
+    if (!visible) { if (button) button.style.display = 'none'; return; }
+    if (!button) {
+      button = document.createElement('button');
+      button.id = 'staff-fullscreen';
+      button.type = 'button';
+      button.className = 'btn';
+      button.onclick = function () {
+        var root = document.documentElement;
+        var method = active() ? (document.exitFullscreen || document.webkitExitFullscreen || document.webkitCancelFullScreen) : (root.requestFullscreen || root.webkitRequestFullscreen || root.webkitRequestFullScreen);
+        if (!method) { notify('此 Chrome 不支援網頁全螢幕，請繼續使用目前介面。'); return; }
+        try {
+          var result = method.call(active() ? document : root);
+          if (result && typeof result.catch === 'function') result.catch(function () { notify('無法進入全螢幕，請再點一次按鈕；若持續失敗，可能是瀏覽器限制。'); });
+        } catch (error) { notify('無法切換全螢幕：' + error.message); }
+      };
+      document.body.appendChild(button);
+    }
+    button.style.display = '';
+    button.textContent = active() ? '退出全螢幕' : '全螢幕';
+    button.setAttribute('aria-label', active() ? '退出全螢幕' : '進入全螢幕，隱藏瀏覽器網址列');
+    button.setAttribute('aria-pressed', active() ? 'true' : 'false');
+  }
+  var style = document.createElement('style');
+  style.textContent = '#staff-fullscreen{position:fixed;right:16px;bottom:18px;z-index:55;font-size:13px;min-height:36px;padding:6px 10px;box-shadow:0 3px 14px #0003}body:has(.cp-overlay) #staff-fullscreen{display:none!important}@media print{#staff-fullscreen{display:none!important}}';
+  document.head.appendChild(style);
+  document.addEventListener('fullscreenchange', sync);
+  document.addEventListener('webkitfullscreenchange', sync);
+  document.addEventListener('fullscreenerror', function () { notify('瀏覽器拒絕全螢幕，請再點一次全螢幕按鈕。'); });
+  document.addEventListener('webkitfullscreenerror', function () { notify('此瀏覽器無法切換全螢幕。'); });
+  var app = document.getElementById('app');
+  if (app && window.MutationObserver) new MutationObserver(sync).observe(app, {childList:true,subtree:true});
+
+  var loginEntering = false;
+  function enterFromLogin() {
+    if (active() || loginEntering) return;
+    var root = document.documentElement;
+    var enter = root.requestFullscreen || root.webkitRequestFullscreen || root.webkitRequestFullScreen;
+    if (!enter) return;
+    loginEntering = true;
+    try {
+      var result = enter.call(root);
+      if (result && typeof result.catch === 'function') result.catch(function () { loginEntering = false; });
+    } catch (error) { loginEntering = false; }
+    window.setTimeout(function () { loginEntering = false; }, 1200);
+  }
+  // Enter from the login button before the asynchronous request, after typing is complete.
+  document.addEventListener('click', function (event) {
+    var node = event.target, submit = false;
+    if (node && node.nodeType !== 1) node = node.parentElement;
+    while (node && node !== document) {
+      if (node.tagName === 'BUTTON' && node.type === 'submit') submit = true;
+      if (node.id === 'login-form') { if (submit) enterFromLogin(); break; }
+      node = node.parentElement;
+    }
+  }, true);
+  document.addEventListener('submit', function (event) {
+    if (event.target && event.target.id === 'login-form') enterFromLogin();
+  }, true);
+  sync();
+})();
+</script><script src="./truck-mode.js"></script><script>window.__startTruckApp();</script><script data-cloud-printing="v1">
+(()=>{
+ const escape=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const stamp=v=>v?new Date(v).toLocaleString('zh-TW',{timeZone:'Asia/Taipei',hour12:false}):'';
+ function lines(job){const b=job.bill||{},paid=job.kind==='receipt'&&b.status==='paid',receipt=job.kind==='receipt',rows=job.lines||[];
+  const out=['碗粿張',receipt?(paid?'結帳清單（非統一發票）':'消費明細（尚未結帳）'):'廚房點餐單'];
+  const serial=String(b.serial??'');
+  out.push(/^[1-9]\d*$/.test(serial)?'流水單號 '+serial.padStart(4,'0'):(b.pickup_code?'取餐碼 '+b.pickup_code:'流水單號 —'));
+  if(String(job.id).startsWith('reprint:')||job.reprint)out.push('＊＊ 重印 ＊＊');
+  if(b.pickup_code)out.push('取餐碼：'+b.pickup_code,'取餐日期：'+b.pickup_date,(b.preorder_channel==='web'?'網路':'電話')+'預購');out.push('時間：'+stamp(job.created_at),'------------------------------');let total=0;
+  for(const l of rows){out.push(l.name+' × '+l.qty);if(receipt)out.push('NT$'+l.price+' × '+l.qty+' = NT$'+l.price*l.qty);if(l.note)out.push('備註：'+l.note);out.push('');total+=l.price*l.qty;}
+  out.push('------------------------------','本單合計 NT$'+total);
+  if(paid)out.push('付款：'+b.payment,'實收 NT$'+b.received,'找零 NT$'+(b.received-total),'結帳：'+stamp(b.paid_at));
+  else if(receipt)out.push('尚未收款，請至櫃檯結帳');
+  out.push('系統開發：Winnie NO.17');return out;
+ }
+ function markup(job){return '<div class="cp-paper">'+lines(job).map((l,i)=>'<div'+(i===2?' class="cp-heading cp-ticket"':i<2?' class="cp-heading"':'')+'>'+escape(l||'\u00a0')+'</div>').join('')+'</div>';}
+ function bands(job,width=576){const result=[],rows=[],c=document.createElement('canvas'),ctx=c.getContext('2d');const normal=width===576?28:25;
+  lines(job).forEach((raw,index)=>{
+   const ticket=index===2,size=ticket?(width===576?46:36):normal;
+   const font=(ticket?'bold ':'')+size+'px sans-serif',height=ticket?size+18:40;
+   ctx.font=font;
+   let row='';
+   for(const char of raw){
+    if(row&&ctx.measureText(row+char).width>width-24){rows.push({text:row,font,height,size,ticket});row=char;}
+    else row+=char;
+   }
+   rows.push({text:row,font,height,size,ticket});
+  });
+  for(let start=0;start<rows.length;start+=12){
+   const batch=rows.slice(start,start+12),height=batch.reduce((sum,row)=>sum+row.height,12);
+   c.width=width;c.height=height;ctx.fillStyle='#fff';ctx.fillRect(0,0,width,height);ctx.fillStyle='#000';
+   let y=6;
+   for(const row of batch){
+    ctx.font=row.font;ctx.textAlign=row.ticket?'center':'left';
+    ctx.fillText(row.text,row.ticket?width/2:12,y+row.size);y+=row.height;
+   }
+   const pixels=ctx.getImageData(0,0,width,height).data,stride=width/8,data=new Uint8Array(8+stride*height);data.set([29,118,48,0,stride&255,stride>>8,height&255,height>>8]);
+   for(let y=0;y<height;y++)for(let x=0;x<width;x++){const p=(y*width+x)*4;if(pixels[p]+pixels[p+1]+pixels[p+2]<384)data[8+y*stride+(x>>3)]|=128>>(x%8);}result.push(data);
+  }return result;
+ }
+ globalThis.CloudPrintCore={escape,stamp,lines,markup,bands};
+})();
+
+(()=>{
+ const core=CloudPrintCore,esc=core.escape;
+ const prefsKey='ukcqrcode-web-print-v1';let device,iface,outEndpoint,busy=false,lastMessage='列印可用系統印表機；Windows 自動出單請先啟動並連接本機列印程式。',lastBill=sessionStorage.getItem('cloud-last-paid')||'';
+ let pref;try{pref=JSON.parse(localStorage.getItem(prefsKey)||'{}')}catch{pref={}}
+ const owner=localStorage.getItem('cloud-print-owner')||Array.from(crypto.getRandomValues(new Uint8Array(16)),x=>x.toString(16).padStart(2,'0')).join('');localStorage.setItem('cloud-print-owner',owner);
+ const save=()=>localStorage.setItem(prefsKey,JSON.stringify(pref));
+ const kind=()=>state.role==='kitchen'?'kitchen':state.role==='cashier'?'receipt':path==='/kitchen'?'kitchen':path==='/cashier'?'receipt':pref.work||'receipt';
+ const allowed=()=>state.role==='admin'||state.role===(kind()==='kitchen'?'kitchen':'cashier');
+ function message(s){lastMessage=s;const t=document.getElementById('cp-status');if(t)t.textContent=s;}
+ async function call(url,body){const r=await cloudFetch(url,{method:body?'POST':'GET',headers:body?{'Content-Type':'application/json'}:{},body:body?JSON.stringify(body):undefined});const j=await r.json();if(!r.ok)throw Error(j.error||'列印連線失敗');return j;}
+ const originalFetch=cloudFetch;cloudFetch=async function(url,options){const r=await originalFetch(url,options);if(url==='/api/checkout'&&r.ok){try{lastBill=JSON.parse(options.body).billId;sessionStorage.setItem('cloud-last-paid',lastBill);decorate();}catch{}}if(url==='/api/logout'){pref.auto=false;save();document.getElementById('cp-overlay')?.remove();document.body.classList.remove('cp-printing');}return r;};
+ function style(){if(document.getElementById('cp-style'))return;const el=document.createElement('style');el.id='cp-style';el.textContent=`
+ .cp-controls{padding:16px;margin:0 0 20px;border:1px solid #d9e4dd;border-radius:12px;background:#fff}.cp-controls .actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.cp-controls label{display:flex;align-items:center;gap:6px}.cp-status{font-size:14px;color:#50675b;margin-top:9px}.cp-overlay{position:fixed;inset:0;background:#f7f8f5;z-index:9999;overflow:auto;padding:18px}.cp-top{max-width:800px;margin:0 auto 20px;display:flex;gap:10px;flex-wrap:wrap}.cp-paper{width:72mm;max-width:100%;margin:auto;background:#fff;padding:4mm;color:#000;font:16px/1.5 sans-serif;overflow-wrap:anywhere;white-space:pre-wrap}.cp-heading{font-size:20px;font-weight:bold;text-align:center}.cp-ticket{font-size:28px;line-height:1.25;margin:5px 0}.cp-history{max-width:850px;margin:auto;background:white;padding:18px}.cp-history section{padding:12px 0;border-bottom:1px solid #ddd}.cp-history button{margin:5px}
+ @media print{body.cp-printing{background:#fff!important}body.cp-printing>*:not(#cp-overlay){display:none!important}body.cp-printing #cp-overlay{display:block!important;position:static!important;padding:0!important;overflow:visible!important;background:#fff!important}body.cp-printing .cp-top{display:none!important}body.cp-printing .cp-paper{display:block!important;box-shadow:none!important;width:var(--cp-width,72mm);padding:0!important;margin:0!important;max-width:100%!important}body.cp-printing .cp-paper div{break-inside:avoid}@page{margin:4mm}}
+ `;document.head.appendChild(el);}
+ function overlay(){document.getElementById('cp-overlay')?.remove();const p=document.createElement('div');p.id='cp-overlay';p.className='cp-overlay';p.setAttribute('role','dialog');p.setAttribute('aria-label','列印預覽');document.body.appendChild(p);return p;}
+ function closePreview(){const panel=document.getElementById('cp-overlay');if(panel&&panel.parentNode)panel.parentNode.removeChild(panel);document.body.classList.remove('cp-printing');}
+ document.addEventListener('click',event=>{const button=event.target.closest&&event.target.closest('#cp-close,#cp-exit');if(!button)return;event.preventDefault();event.stopImmediatePropagation();closePreview();},true);
+ document.addEventListener('keydown',event=>{if(event.key==='Escape'&&document.getElementById('cp-overlay'))closePreview();});
+
+ function desktopPreview(data,id,type){
+  const panel=overlay(),frame=document.createElement('iframe');
+  frame.title='單據列印預覽';frame.style.cssText='display:block;width:100%;height:calc(100dvh - 36px);min-height:85vh;border:0;background:#f7f8f5';
+  frame.setAttribute('sandbox','allow-scripts allow-modals allow-top-navigation-by-user-activation');
+  const back=document.createElement('a');back.href=siteHref(path);back.textContent='關閉並返回工作台';back.className='btn secondary';back.style.cssText='display:inline-flex;margin:0 0 12px';back.onclick=function(event){event.preventDefault();closePreview();};panel.appendChild(back);
+  panel.appendChild(frame);
+  const childCode=`(function(){
+   function send(action){parent.postMessage({ukcqrcodeReceipt:true,action:action},'*');}
+   document.getElementById('receipt-return').onclick=function(e){e.preventDefault();send('close');};
+   
+   document.getElementById('receipt-system').onclick=function(){try{window.print();}catch(error){document.getElementById('receipt-status').textContent='無法開啟列印：'+error.message;}};
+   document.getElementById('receipt-usb').onclick=function(){send('usb');};
+   var apk=document.getElementById('receipt-apk');if(apk)apk.onclick=function(){send('apk');};
+   document.getElementById('receipt-width').onchange=function(){document.documentElement.style.setProperty('--paper-width',this.value);};
+   document.addEventListener('keydown',function(e){if(e.key==='Escape')send('close');});
+   window.addEventListener('message',function(e){if(e.source!==parent||!e.data||!e.data.ukcqrcodeReceiptResult)return;document.getElementById('receipt-status').textContent=e.data.message;});
+  })();`;
+  const styles='*{box-sizing:border-box}body{margin:0;padding:12px;background:#f7f8f5;color:#173c36;font:16px/1.5 sans-serif}.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:0 auto 14px;max-width:900px}button,select,a.close-link{font:inherit;padding:12px;border:1px solid #d9e4dd;border-radius:10px;background:white;color:#164f46;cursor:pointer}a.close-link{display:inline-block;text-decoration:none}button.primary{background:#164f46;color:white}.help,#receipt-status{max-width:900px;margin:10px auto}.cp-paper{width:var(--paper-width,72mm);max-width:100%;margin:20px auto;background:white;padding:4mm;color:black;white-space:pre-wrap;overflow-wrap:anywhere;font:16px/1.5 sans-serif}.cp-heading{text-align:center;font-size:20px;font-weight:bold}.cp-ticket{font-size:28px;line-height:1.25;margin:5px 0}@media print{body{padding:0;background:white}.toolbar,.help,#receipt-status{display:none!important}.cp-paper{margin:0;padding:0;max-width:100%}.cp-paper div{break-inside:avoid}@page{margin:4mm}}';
+  frame.srcdoc='<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>'+styles+'</style></head><body><div class="toolbar"><a class="close-link" id="receipt-return" href="'+esc(siteHref(path))+'" target="_top">關閉並返回工作台</a><label>紙寬 <select id="receipt-width"><option value="72mm">80 mm 收據紙</option><option value="50mm">58 mm 收據紙</option><option value="180mm">A4</option></select></label><button type="button" class="primary" id="receipt-system">系統印表機列印</button><button type="button" id="receipt-usb">依列印設定直接列印</button>'+(allowed()?'<button type="button" id="receipt-apk">交由雲端 APK 列印</button>':'')+'</div><p class="help">請先在 Windows 安裝並試印 CP-Q1UN／PrinterPOS-80，再按「系統印表機列印」選擇它；若清單沒有，網站無法代為新增 Windows 印表機。</p><p id="receipt-status" role="status"></p>'+core.markup(data)+'<script>'+childCode+'<'+ '/script></body></html>';
+  function respond(text){if(frame.contentWindow)frame.contentWindow.postMessage({ukcqrcodeReceiptResult:true,message:text},'*');}
+  async function onMessage(event){
+   if(event.source!==frame.contentWindow||!event.data||event.data.ukcqrcodeReceipt!==true)return;
+   const action=event.data.action;
+   if(action==='close'){window.removeEventListener('message',onMessage);closePreview();return;}
+   if(!panel.isConnected){window.removeEventListener('message',onMessage);return;}
+   if(action!=='usb'&&action!=='apk')return;
+   if(busy||connecting){respond('目前正在列印或連線，請稍候。');return;}
+   if(action==='usb'&&!ready()){respond('請先到「列印設定」連接印表機；也可使用系統印表機列印。');return;}
+   if(action==='apk'&&(!allowed()||type==='receipt'&&data.bill.status!=='paid')){respond('此單據無法交由 APK 重印。');return;}
+   busy=true;
+   try{if(action==='usb'){await sendManual(data);respond('已送至印表機，請確認紙本。');}else{await call('/api/print/reprint',{billId:id,kind:type});respond('已加入 APK 重印佇列。');}}
+   catch(error){respond('列印失敗：'+error.message);}finally{busy=false;}
+  }
+  window.addEventListener('message',onMessage);
+  new MutationObserver(function(records,observer){if(!panel.isConnected){window.removeEventListener('message',onMessage);observer.disconnect();}}).observe(document.body,{childList:true});
+ }
+
+ async function preview(id,type){try{const data=await call('/api/print/receipt?bill='+encodeURIComponent(id)+'&kind='+type);data.reprint=data.bill.status==='paid';if(!/Android|iPhone|iPad/i.test(navigator.userAgent)){desktopPreview(data,id,type);return;}const p=overlay();p.innerHTML='<div class="cp-top"><a class="btn secondary" id="cp-exit" href="'+esc(siteHref(path))+'">關閉並返回工作台</a><label>紙寬 <select id="cp-width"><option value="72mm">80 mm 收據紙</option><option value="50mm">58 mm 收據紙</option><option value="180mm">A4</option></select></label><button class="btn" id="cp-system" type="button">依列印設定直接列印</button><button class="btn secondary" id="cp-windows" type="button">系統印表機列印</button>'+(state.role==='admin'?'<button class="btn secondary" id="cp-apk" type="button">交由雲端 APK 列印</button>':'')+''+(navigator.usb?'<button class="btn secondary" id="cp-direct">USB 列印</button>':'')+'<span>電腦 USB 連線被拒絕時，可用系統印表機列印並選擇實體印表機。APK 列印需另外按下對應按鈕。</span></div>'+core.markup(data);
+  p.querySelector('#cp-width').onchange=e=>p.style.setProperty('--cp-width',e.target.value);
+  p.querySelector('#cp-system').onclick=async e=>{
+ const button=e.currentTarget;if(busy||connecting)return;
+ if(!ready()){alert('尚未連接印表機，請先到列印設定完成連線；也可使用系統印表機列印。');return;}
+ button.disabled=true;busy=true;
+ try{await sendManual(data);message('已送至印表機，請確認紙本');}catch(error){alert(error.message);}finally{busy=false;button.disabled=false;}
+};
+  p.querySelector('#cp-windows').onclick=()=>{document.body.classList.add('cp-printing');try{window.print();}catch(error){document.body.classList.remove('cp-printing');alert(error.message);}};
+  p.querySelector('#cp-apk')?.addEventListener('click',async e=>{if(type==='receipt'&&data.bill.status!=='paid'){alert('此帳單尚未結帳，請使用 USB 或系統印表機列印消費明細。');return;}const button=e.currentTarget;button.disabled=true;try{await call('/api/print/reprint',{billId:id,kind:type});alert('已加入 APK 重印佇列，請確認雲端列印 APK 已啟用。');}catch(error){alert(error.message);}finally{button.disabled=false;}});
+
+  p.querySelector('#cp-direct')?.addEventListener('click',async e=>{e.target.disabled=true;let owned=false;try{if(busy)throw Error('目前正在列印，請稍後再補印');if(!ready())await connect();if(busy)throw Error('目前正在列印，請稍後再補印');busy=true;owned=true;await sendManual(data);message('已送至印表機，請確認紙本')}catch(e){alert(e.message)}finally{if(owned)busy=false;e.target.disabled=false}});
+ }catch(e){alert(e.message)}}
+ addEventListener('afterprint',()=>document.body.classList.remove('cp-printing'));
+ async function history(){try{const p=overlay(),day=new Date(Date.now()+28800000).toISOString().slice(0,10);p.innerHTML='<div class="cp-history"><a class="btn secondary" id="cp-exit" href="'+esc(siteHref(path))+'">關閉並返回工作台</a><h2>訂單查詢／重印</h2><label>開單日期 <input type="date" id="cp-day" value="'+day+'"></label><div id="cp-list"></div></div>';
+  const load=async()=>{try{const j=await call('/api/print/history?day='+p.querySelector('#cp-day').value),list=p.querySelector('#cp-list');list.innerHTML=j.bills.map(b=>'<section>'+esc(billTitle(b))+' · '+esc(b.id)+' · '+(b.status==='paid'?'已結帳':'未結帳')+(b.pickup_date?' · 取餐日 '+esc(b.pickup_date):'')+' · NT$'+b.total+'<br>'+(state.role!=='cashier'?'<button class="btn small secondary" data-cp-id="'+esc(b.id)+'" data-cp-kind="kitchen">點餐單</button> ':'')+(state.role!=='kitchen'?'<button class="btn small secondary" data-cp-id="'+esc(b.id)+'" data-cp-kind="receipt">'+(b.status==='paid'?'重印結帳清單':'消費明細')+'</button>':'')+'</section>').join('')+'<h3>最近列印工作</h3>'+j.jobs.map(x=>'<section>'+esc(x.bill_id)+' · '+esc(x.kind==='kitchen'?'廚房':'結帳')+' · '+esc(({pending:'待列印',sending:'傳送中／需確認',sent:'已送至印表機',failed:'失敗'})[x.status]||x.status)+'<br>'+esc(x.detail)+(x.status==='failed'||x.status==='sending'?' <button class="btn small secondary" data-cp-retry="'+esc(x.id)+'">確認後補印</button>':'')+'</section>').join('');list.querySelectorAll('[data-cp-id]').forEach(b=>b.onclick=()=>preview(b.dataset.cpId,b.dataset.cpKind));list.querySelectorAll('[data-cp-retry]').forEach(b=>b.onclick=async()=>{if(!confirm('請先確認紙本，補印可能再次出紙。確定補印？'))return;await call('/api/print/retry',{id:b.dataset.cpRetry});await load()});}catch(e){p.querySelector('#cp-list').textContent=e.message;}};
+  p.querySelector('#cp-day').onchange=load;await load();
+ }catch(e){alert(e.message)}}
+
+
+ const windowsPC=/Windows/i.test(navigator.userAgent);
+
+ const appleMobile=/iPhone|iPad|iPod/i.test(navigator.userAgent)||/Macintosh/i.test(navigator.userAgent)&&navigator.maxTouchPoints>1;
+ const defaultTransport=windowsPC?'windows':navigator.usb?'usb':'system';
+ const mode=()=>['windows','usb','serial','ble','system'].includes(pref.transport)?pref.transport:defaultTransport;
+ let serialPort=null,bleDevice=null,bleCharacteristic=null;
+ const transportNames={windows:'Windows 驅動 USB',usb:'USB 直接列印',serial:'藍牙 SPP',ble:'藍牙 BLE',system:'系統列印／AirPrint（手動）'};
+ function receiptParts(job){return [new Uint8Array([27,64]),...core.bands(job,pref.narrow?384:576),new Uint8Array([27,100,4]),...(pref.cut!==false?[new Uint8Array([29,86,66,0])]:[])];}
+ function bluetoothLost(type){if(mode()!==type)return;pref.auto=false;save();message('藍牙已中斷，請到列印設定重新連接；請確認紙本後再補印。');}
+ function uuid(value,label){const raw=String(value||'').trim().toLowerCase();if(/^[a-f0-9]{4,8}$/.test(raw))return parseInt(raw,16);if(/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/.test(raw))return raw;throw Error('請依印表機規格填寫正確的 '+label+' UUID。');}
+ async function connectSerial(){
+  if(!navigator.serial?.requestPort)throw Error('此瀏覽器未提供藍牙 SPP。請改用支援的 Chrome 或原生列印程式。');
+  if(busy||connecting)throw Error('目前正在列印或連線，請稍候。');
+  if(serialPort?.writable){message('藍牙 SPP 已連接。');return;}
+  connecting=true;let chosen;
+  try{
+   chosen=await navigator.serial.requestPort({filters:[{bluetoothServiceClassId:'00001101-0000-1000-8000-00805f9b34fb'}]});
+   await chosen.open({baudRate:9600});serialPort=chosen;
+   chosen.addEventListener?.('disconnect',()=>{if(serialPort===chosen){serialPort=null;bluetoothLost('serial');}});
+   message('藍牙 SPP 已連接。請先測試列印。');
+  }catch(error){if(chosen&&chosen!==serialPort)await chosen.close().catch(()=>{});throw Error(error.name==='NotFoundError'?'未選擇藍牙印表機。請先在系統藍牙設定配對，再重新連接。':'藍牙 SPP 連接失敗：'+error.message);}
+  finally{connecting=false;}
+ }
+ async function connectBLE(){
+  if(!navigator.bluetooth?.requestDevice)throw Error('此瀏覽器未提供 BLE 連線。請改用支援的 Chrome 或系統列印。');
+  if(busy||connecting)throw Error('目前正在列印或連線，請稍候。');
+  if(bleDevice?.gatt?.connected&&bleCharacteristic){message('BLE 印表機已連接。');return;}
+  const service=uuid(pref.bleService,'Service'),characteristic=uuid(pref.bleCharacteristic,'Characteristic');
+  connecting=true;let chosen;
+  try{
+   chosen=await navigator.bluetooth.requestDevice({acceptAllDevices:true,optionalServices:[service]});
+   const server=await chosen.gatt.connect(),primary=await server.getPrimaryService(service),write=await primary.getCharacteristic(characteristic);
+   if(!write.properties.write&&!write.properties.writeWithoutResponse)throw Error('指定的 Characteristic 不支援寫入。');
+   bleDevice=chosen;bleCharacteristic=write;
+   chosen.addEventListener('gattserverdisconnected',()=>{if(bleDevice===chosen){bleCharacteristic=null;bluetoothLost('ble');}});
+   message('BLE 已連接：'+(chosen.name||'印表機')+'。請先測試列印。');
+  }catch(error){if(chosen&&chosen!==bleDevice)chosen.gatt?.disconnect();throw Error(error.name==='NotFoundError'?'未選擇 BLE 印表機，或找不到設定的服務。請確認廠商提供的 UUID。':'BLE 連接失敗：'+error.message);}
+  finally{connecting=false;}
+ }
+ async function disconnectPrinter(){
+  if(busy||connecting)throw Error('請等待目前列印或連線完成。');
+  pref.auto=false;save();
+  if(mode()==='windows')bridgeReady=false;
+  if(mode()==='usb'&&device?.opened){await device.close();device=null;}
+  if(mode()==='serial'&&serialPort){await serialPort.close();serialPort=null;}
+  if(mode()==='ble'){bleDevice?.gatt?.disconnect();bleCharacteristic=null;bleDevice=null;}
+  message('已中斷目前連線，自動列印已關閉。');
+ }
+ function connectionOptions(){return [
+  ...(windowsPC?[['windows','Windows USB（已安裝驅動）',true]]:[]),
+  ['usb','USB 直接連接（Android OTG／支援的 Chrome）',!!navigator.usb],
+  ['serial','藍牙：傳統 SPP',!!navigator.serial?.requestPort],
+  ['ble','藍牙：BLE',!!navigator.bluetooth?.requestDevice],
+  ['system','系統列印／Apple AirPrint（手動）',true]
+ ].map(([value,label,enabled])=>'<option value="'+value+'"'+(value===mode()?' selected':'')+(enabled?'':' disabled')+'>'+label+(enabled?'':' — 此瀏覽器不支援')+'</option>').join('');}
+ function platformSettings(){
+  const label=appleMobile?'iPhone／iPad':/Android/i.test(navigator.userAgent)?'Android 手機／平板':windowsPC?'Windows':/Mac/i.test(navigator.userAgent)?'Mac':'目前裝置';
+  return '<p>目前裝置：<strong>'+label+'</strong>。藍牙直接列印適用支援 ESC/POS 的收據印表機，需先測試確認相容。</p><label for="cp-transport">連接方式 <select id="cp-transport">'+connectionOptions()+'</select></label><div id="cp-ble-fields" style="margin:14px 0"><label>BLE Service UUID <input id="cp-ble-service" value="'+esc(pref.bleService||'')+'" placeholder="依印表機廠商規格" maxlength="36"></label><label>BLE Characteristic UUID <input id="cp-ble-characteristic" value="'+esc(pref.bleCharacteristic||'')+'" placeholder="可寫入的特徵 UUID" maxlength="36"></label></div><div class="actions" style="margin:14px 0"><button type="button" class="btn secondary" id="cp-transport-connect">連接印表機</button><button type="button" class="btn secondary" id="cp-disconnect">中斷連線</button></div><p id="cp-transport-help"></p>';
+ }
+ function syncPlatformSettings(p){
+  const selector=p.querySelector('#cp-transport');if(!selector)return;
+  const type=mode(),help=p.querySelector('#cp-transport-help');
+  const tips={windows:'使用已安裝的 Windows 驅動。請啟動本機列印程式，展開下方 Windows USB 連線並貼上配對碼。',usb:'Android 手機／平板需支援 USB OTG，使用 OTG 線或轉接頭連接印表機，並允許 Chrome 存取 USB。',serial:'先在系統藍牙設定配對印表機，再按連接。需瀏覽器提供 Web Serial 藍牙 SPP；舊版 Android／Chrome 可能不支援。',ble:'需印表機支援 BLE。請依廠商規格填寫 Service 與可寫入的 Characteristic UUID，再搜尋連接；傳統藍牙 SPP 印表機請選 SPP。',system:appleMobile?'使用 iPhone／iPad 的 AirPrint；印表機須支援 AirPrint，且與裝置在相同網路。需手動確認，無法以本頁自動出單。':'使用系統列印視窗，選擇已安裝或 AirPrint 印表機。需手動確認，無法以此模式自動出單。'};
+  if(help.textContent!==tips[type])help.textContent=tips[type];
+  p.querySelector('#cp-ble-fields').hidden=type!=='ble';
+  p.querySelector('#cp-transport-connect').hidden=type==='windows'||type==='system';
+  p.querySelector('#cp-disconnect').hidden=type==='system';
+  const windowsPanel=p.querySelector('#cp-windows-pair');if(windowsPanel)windowsPanel.hidden=type!=='windows';
+ }
+ function systemTest(job){
+  const panel=overlay();panel.innerHTML='<div class="cp-top"><a class="btn secondary" id="cp-exit" href="'+esc(siteHref(path))+'">關閉</a><button type="button" class="btn" id="cp-test-system">系統列印／AirPrint</button></div>'+core.markup(job);
+  panel.querySelector('#cp-test-system').onclick=()=>{document.body.classList.add('cp-printing');try{window.print();}catch(error){document.body.classList.remove('cp-printing');message(error.message);}};
+ }
+
+ let bridgeReady=false,bridgePrinter='',bridgeToken=sessionStorage.getItem('ukcqrcode-windows-pair')||'';
+ async function bridgeCall(route,body){
+  if(!bridgeToken)throw Error('請先連接 Windows USB 印表機。');
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),route==='/status'?10000:45000);
+  try{
+   const result=await fetch('http://127.0.0.1:17888'+route,{method:body?'POST':'GET',mode:'cors',credentials:'omit',targetAddressSpace:'loopback',signal:controller.signal,headers:{'X-ukcqrcode-Token':bridgeToken,...(body?{'Content-Type':'application/json'}:{})},...(body?{body:JSON.stringify(body)}:{})});
+   const value=await result.json();if(!result.ok)throw Error(value.error||'Windows 列印連線失敗');return value;
+  }catch(error){if(error instanceof TypeError||error.name==='AbortError')throw Error('無法連接本機列印程式。請先啟動 windows-print-bridge.ps1，並允許 Chrome 存取本機／區域網路。');throw error;}
+  finally{clearTimeout(timer);}
+ }
+ function ensureWindowsPair(){
+  let panel=document.getElementById('cp-windows-pair');
+  if(panel)return panel;
+  const controls=document.getElementById('cp-controls');if(!controls)throw Error('請回工作台後再連接印表機。');
+  panel=document.createElement('details');panel.id='cp-windows-pair';panel.style.cssText='margin-top:16px;padding:16px;border:2px solid #164f46;border-radius:10px;background:#f4faf6';
+  panel.innerHTML='<summary id="cp-connect" class="btn secondary" style="cursor:pointer;pointer-events:auto;user-select:none">連接 USB 印表機（Windows）</summary><div style="margin-top:14px"><strong>Windows USB 印表機連線</strong><p>先按「下載 Windows 列印程式」，在下載資料夾開啟 PowerShell，執行下方指令：</p><pre style="white-space:pre-wrap;overflow-wrap:anywhere;user-select:text">powershell -NoProfile -ExecutionPolicy Bypass -File .\\windows-print-bridge.ps1</pre><p>在程式視窗選擇 CP-Q1UN，將顯示的 Pairing code 貼到下方。程式需保持開啟。</p><label for="cp-pair-code">配對碼</label><input id="cp-pair-code" type="text" autocomplete="off" spellcheck="false" style="display:block;width:100%;max-width:650px;font-size:18px;padding:12px;margin:8px 0" placeholder="貼上列印程式顯示的 48 碼 Pairing code"><div class="actions"><button type="button" class="btn" id="cp-pair-submit">確認連接</button><button type="button" class="btn secondary" id="cp-pair-hide">收起</button></div><p id="cp-pair-status" role="status" aria-live="polite"></p></div>';
+  controls.appendChild(panel);
+  const input=panel.querySelector('#cp-pair-code'),button=panel.querySelector('#cp-pair-submit'),status=panel.querySelector('#cp-pair-status');
+  input.value=bridgeToken;
+  const submit=async()=>{
+   if(busy||connecting)return;
+   const code=input.value.trim().toLowerCase();
+   if(!/^[a-f0-9]{48}$/.test(code)){status.textContent='請貼上本機列印程式顯示的完整 48 碼配對碼。';input.focus();return;}
+   bridgeToken=code;bridgeReady=false;connecting=true;button.disabled=true;
+   status.textContent='正在連接本機列印程式。Chrome 若詢問本機／區域網路存取，請允許。';message(status.textContent);
+   try{
+    const result=await bridgeCall('/status');bridgePrinter=result.printer;bridgeReady=true;
+    sessionStorage.setItem('ukcqrcode-windows-pair',bridgeToken);
+    status.textContent='已連接：'+bridgePrinter+'。請先測試列印，確認出紙後勾選自動列印。';message(status.textContent);
+   }catch(error){status.textContent=error.message;message(error.message);}
+   finally{connecting=false;button.disabled=false;}
+  };
+  button.addEventListener('click',submit);
+  input.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();submit();}});
+  panel.querySelector('#cp-pair-hide').onclick=()=>{panel.open=false;};
+  return panel;
+ }
+
+ function connectWindows(){const panel=ensureWindowsPair();panel.open=true;panel.querySelector('input').focus();message('請在 Windows USB 連線設定貼上配對碼。');}
+
+ const ready=()=>mode()==='windows'?bridgeReady:mode()==='usb'?!!device?.opened:mode()==='serial'?!!serialPort?.writable:mode()==='ble'?!!(bleDevice?.gatt?.connected&&bleCharacteristic):false;
+ async function sendConfigured(job){
+  const type=mode();if(type==='usb')return send(job);
+  if(type==='serial'||type==='ble'){
+   if(!ready())throw Error('請先連接藍牙印表機。');
+   const parts=receiptParts(job);if(parts.reduce((sum,part)=>sum+part.length,0)>8000000)throw Error('單據過長，請分批列印。');
+   if(type==='serial'){const writer=serialPort.writable.getWriter();try{for(const part of parts)for(let offset=0;offset<part.length;offset+=1024)await writer.write(part.subarray(offset,offset+1024));}finally{writer.releaseLock();}return;}
+   const write=bleCharacteristic;for(const part of parts)for(let offset=0;offset<part.length;offset+=20){const chunk=part.subarray(offset,offset+20);if(write.properties.write&&write.writeValueWithResponse)await write.writeValueWithResponse(chunk);else if(write.properties.writeWithoutResponse&&write.writeValueWithoutResponse){await write.writeValueWithoutResponse(chunk);await new Promise(resolve=>setTimeout(resolve,15));}else await write.writeValue(chunk);}return;
+  }
+  if(type==='system')throw Error('系統列印／AirPrint 需手動確認，請使用單據中的系統列印按鈕。');
+  if(!bridgeReady)throw Error('請先連接 Windows USB 印表機。');
+  const parts=receiptParts(job);
+  const length=parts.reduce((sum,part)=>sum+part.length,0);
+  if(length>8000000)throw Error('單據過長，請分批列印。');
+  const bytes=new Uint8Array(length);let offset=0;for(const part of parts){bytes.set(part,offset);offset+=part.length;}
+  let binary='';for(let i=0;i<bytes.length;i+=8192)binary+=String.fromCharCode(...bytes.subarray(i,i+8192));
+  return bridgeCall('/print',{id:job.id,bytes:btoa(binary)});
+ }
+ async function sendManual(data){return sendConfigured({...data,id:'manual:'+crypto.randomUUID()});}
+
+ let connecting=false;
+ async function connect(){
+  if(mode()==='windows')return connectWindows();if(mode()==='serial')return connectSerial();if(mode()==='ble')return connectBLE();if(mode()==='system'){message('此模式請使用系統列印／AirPrint，無需 USB 配對。');return;}return connectUSB();
+ }
+ async function connectUSB(){
+  if(busy||connecting)throw Error('目前正在列印或連線，請稍候。');
+  if(!navigator.usb)throw Error('此 Chrome 不支援 WebUSB，請以電腦 Chrome 開啟 HTTPS 網站。');
+  connecting=true;let chosen=null,phase='選擇印表機';
+  message('請在 Chrome 裝置視窗中選擇 USB 印表機並允許連線。');
+  try{
+   chosen=await navigator.usb.requestDevice({filters:[{classCode:7},{classCode:255}]});
+   if(chosen===device&&device.opened){message('USB 已連接：'+(device.productName||'印表機'));return;}
+   if(device?.opened){await device.close();device=null;iface=null;outEndpoint=null;}
+   phase='開啟裝置';if(!chosen.opened)await chosen.open();
+   if(!chosen.configuration){
+    if(!chosen.configurations.length)throw Error('裝置沒有可用 USB 設定。');
+    await chosen.selectConfiguration(chosen.configurations[0].configurationValue);
+   }
+   const candidates=[];
+   for(const face of chosen.configuration.interfaces)for(const alt of face.alternates){
+    const ep=alt.endpoints.find(e=>e.direction==='out'&&e.type==='bulk');
+    if(ep&&(alt.interfaceClass===7||alt.interfaceClass===255))candidates.push({face,alt,ep});
+   }
+   candidates.sort((a,b)=>(a.alt.interfaceClass===7?0:1)-(b.alt.interfaceClass===7?0:1));
+   if(!candidates.length)throw Error('找不到印表機的 Bulk OUT 傳送介面。');
+   phase='取得 USB 介面';let lastError;
+   for(const candidate of candidates){
+    let claimed=false;
+    try{
+     await chosen.claimInterface(candidate.face.interfaceNumber);claimed=true;
+     const live=chosen.configuration.interfaces.find(f=>f.interfaceNumber===candidate.face.interfaceNumber);
+     if(live.alternate.alternateSetting!==candidate.alt.alternateSetting)await chosen.selectAlternateInterface(candidate.face.interfaceNumber,candidate.alt.alternateSetting);
+     device=chosen;iface=candidate.face.interfaceNumber;outEndpoint=candidate.ep.endpointNumber;
+     message('USB 已連接：'+(chosen.productName||'印表機')+'；介面 '+iface+'，可按「測試列印」確認出紙。');return;
+    }catch(error){lastError=error;if(claimed)await chosen.releaseInterface(candidate.face.interfaceNumber).catch(()=>{});}
+   }
+   throw lastError||Error('無法取得 USB 列印介面。');
+  }catch(error){
+   if(chosen&&chosen!==device&&chosen.opened)await chosen.close().catch(()=>{});
+   if(error.name==='NotFoundError'&&!chosen)throw Error('未選擇印表機或已取消。若清單沒有印表機，請確認 USB 接線及電源。');
+   const details=error.message||String(error);
+   if(phase==='取得 USB 介面')throw Error('Chrome 無法取得 USB 印表機控制權：'+details+'。可能被 Windows 印表機驅動、其他程式或另一個分頁占用；若由系統驅動占用，網頁無法強制解除。');
+   if(/access denied/i.test(details))throw Error('Windows 拒絕 Chrome 存取 USB（Access denied）。請關閉其他列印程式與重複分頁後重試；若仍被拒絕，可在單據預覽選「系統印表機列印」，透過原有 Windows 驅動出紙。');
+   throw Error(phase+'失敗：'+details);
+  }finally{connecting=false;}
+ }
+ async function send(job){if(!device?.opened)throw Error('請先連接 USB 印表機');const write=async bytes=>{for(let p=0;p<bytes.length;){const chunk=bytes.slice(p,p+4096),r=await device.transferOut(outEndpoint,chunk);if(r.status!=='ok'||!r.bytesWritten)throw Error('USB 傳送中斷，請確認紙本後補印');p+=r.bytesWritten;}};await write(new Uint8Array([27,64]));for(const band of core.bands(job,pref.narrow?384:576))await write(band);await write(new Uint8Array([27,100,4]));if(pref.cut!==false)await write(new Uint8Array([29,86,66,0]));}
+ async function poll(){if(busy||connecting||!pref.auto||!allowed()||!ready()||!['/kitchen','/cashier','/printing','/preorders'].includes(path))return;busy=true;try{
+  if(pref.ack){await call('/api/print/result',pref.ack);delete pref.ack;save();}
+  const {jobs}=await call('/api/print/jobs?kind='+kind());if(!jobs.length){message('自動列印：等待'+(kind()==='kitchen'?'新訂單':'結帳清單'));return;}
+  let job;try{job=await call('/api/print/claim',{id:jobs[0].id,owner})}catch(e){message(e.message);return;}let ok=false,detail='';try{await sendConfigured(job);ok=true;detail='已送至印表機，請確認紙本';}catch(e){detail=e.message;pref.auto=false;save();}
+  pref.ack={id:job.id,owner,status:ok?'sent':'failed',detail};save();await call('/api/print/result',pref.ack);delete pref.ack;save();message(detail);
+ }catch(e){message('列印連線：'+e.message)}finally{busy=false;}}
+ function decorate(){if(!state.role){closePreview();pref.auto=false;save();return;}if(path==='/')return;const main=document.querySelector('.admin-main');if(!main)return;
+  const settingsPage=path==='/printing';
+  if(path==='/kitchen'||path==='/cashier'){const work=path==='/kitchen'?'kitchen':'receipt';if(pref.work!==work){pref.work=work;save();}}
+  let p=document.getElementById('cp-controls');if(!p){p=document.createElement('section');p.id='cp-controls';p.className='cp-controls';
+   const autoMarkup='<label><input type="checkbox" id="cp-auto">訂單(結帳)自動列印</label>';
+   if(settingsPage){
+    p.innerHTML=platformSettings()+'<div class="actions"><strong>紙張與測試</strong><button class="btn small secondary" id="cp-test" type="button">測試列印</button><label><input type="checkbox" id="cp-narrow">58 mm 紙</label><label><input type="checkbox" id="cp-cut">自動切紙</label>'+(windowsPC?'<a class="btn small secondary" id="cp-download" href="./windows-print-bridge.ps1" download="windows-print-bridge.ps1">下載 Windows 列印程式</a>':'')+'<span id="cp-last"></span></div><div class="cp-status" id="cp-status" role="status" aria-live="polite"></div><small>USB／藍牙連接成功並測試出紙後，再回廚房或前台啟用「訂單(結帳)自動列印」。請保持網頁開啟。系統列印／AirPrint 需手動確認。</small>';
+    document.getElementById('cp-settings-host').appendChild(p);
+   }else{
+    p.innerHTML='<div class="actions"><button class="btn small secondary" id="cp-history" type="button">訂單查詢／重印</button>'+autoMarkup+'</div>';
+    main.prepend(p);
+   }
+
+
+
+   p.querySelector('#cp-transport')?.addEventListener('change',event=>{
+    if(busy||connecting){event.target.value=mode();message('請等待目前列印或連線完成。');return;}
+    pref.transport=event.target.value;pref.auto=false;save();message('已選擇 '+transportNames[mode()]+'。請連接並測試列印。');decorate();
+   });
+   for(const [id,key] of [['cp-ble-service','bleService'],['cp-ble-characteristic','bleCharacteristic']]){
+    p.querySelector('#'+id)?.addEventListener('change',event=>{
+     if(busy||connecting){event.target.value=pref[key]||'';message('請等待目前列印或連線完成。');return;}
+     pref[key]=event.target.value.trim().toLowerCase();if(mode()==='ble'){pref.auto=false;bleCharacteristic=null;bleDevice?.gatt?.disconnect();}save();
+    });
+   }
+   p.querySelector('#cp-transport-connect')?.addEventListener('click',async event=>{
+    const button=event.currentTarget;button.disabled=true;try{await connect();}catch(error){message(error.message);}finally{button.disabled=false;}
+   });
+   p.querySelector('#cp-disconnect')?.addEventListener('click',async()=>{try{await disconnectPrinter();}catch(error){message(error.message);}});
+   p.querySelector('#cp-test')?.addEventListener('click',async event=>{
+    const job={id:'printer-test:'+crypto.randomUUID(),kind:'kitchen',created_at:new Date().toISOString(),bill:{serial:1},lines:[{name:'中文測試列印',price:0,qty:1,note:'這是測試單，非實際訂單。'}]};
+    if(mode()==='system'){systemTest(job);return;}
+    const button=event.currentTarget;if(busy||connecting){message('目前正在列印或連線，請稍候。');return;}
+    if(!ready()){message('請先在本頁連接印表機。');return;}button.disabled=true;busy=true;
+    try{await sendConfigured(job);message('測試資料已傳送，請確認紙本。');}catch(error){message('測試列印失敗：'+error.message);}finally{busy=false;button.disabled=false;}
+   });
+
+p.querySelector('#cp-auto')?.addEventListener('change',e=>{if(e.target.checked&&!['/kitchen','/cashier','/preorders'].includes(path)){e.target.checked=false;message('請在廚房出餐或前台結帳頁啟用');return;}if(e.target.checked&&mode()==='system'){e.target.checked=false;pref.auto=false;save();toast('系統列印／AirPrint 需手動確認，不能啟用自動列印。');return;}if(e.target.checked&&!ready()){e.target.checked=false;message('請先到左側「列印設定」連接印表機。');toast('請先到「列印設定」連接印表機，再啟用自動列印。');return;}if(e.target.checked&&!confirm('啟用後會列印此工作台尚未處理的待列印工作（包含較早的待印單）。請確認只在一台裝置啟用。')){e.target.checked=false;return;}pref.auto=e.target.checked;save();poll()});
+   for(const [id,key,def] of [['cp-narrow','narrow',false],['cp-cut','cut',true]]){const b=p.querySelector('#'+id);if(b){b.checked=pref[key]??def;b.onchange=()=>{pref[key]=b.checked;save()}}}p.querySelector('#cp-history')?.addEventListener('click',history);
+  }
+  if(settingsPage){if(windowsPC&&mode()==='windows')ensureWindowsPair();syncPlatformSettings(p);}
+  const auto=p.querySelector('#cp-auto');if(auto)auto.checked=!!pref.auto;const connectionButton=p.querySelector('#cp-connect');if(connectionButton&&windowsPC){const label=bridgeReady?'Windows USB 已連接':'連接 USB 印表機（Windows）';if(connectionButton.textContent!==label)connectionButton.textContent=label;}const stat=p.querySelector('#cp-status');if(stat&&stat.textContent!==lastMessage)stat.textContent=lastMessage;
+  if(settingsPage&&lastBill&&kind()==='receipt'){const slot=p.querySelector('#cp-last');if(!slot.firstChild){const b=document.createElement('button');b.className='btn small secondary';b.textContent='列印最近結帳清單';b.onclick=()=>preview(lastBill,'receipt');slot.appendChild(b)}}
+  document.querySelectorAll('[data-pre-print]').forEach(button=>{button.onclick=()=>preview(button.dataset.prePrint,button.dataset.preKind);});
+  if(path==='/kitchen'){const bills=grouped();document.querySelectorAll('.kitchen-grid>.ticket').forEach((card,i)=>{if(card.querySelector('[data-cp-ticket]')||!bills[i])return;const b=document.createElement('button');b.dataset.cpTicket='1';b.className='btn small secondary';b.textContent='列印點餐單';const id=bills[i].id;b.onclick=()=>preview(id,'kitchen');card.querySelector('.ticket-head').appendChild(b)})}
+  for(const pay of document.querySelectorAll('[data-checkout]')){if(pay.parentElement.querySelector('[data-cp-bill]'))continue;const b=document.createElement('button');b.dataset.cpBill='1';b.className='btn secondary';b.textContent='列印消費明細';b.onclick=()=>preview(pay.dataset.checkout,'receipt');pay.parentElement.appendChild(b)}
+ }
+ style();let queued=false;new MutationObserver(()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;decorate()})}).observe(document.getElementById('app'),{childList:true,subtree:true});setInterval(poll,1500);setInterval(decorate,1500);decorate();
+ navigator.usb?.addEventListener('disconnect',e=>{if(e.device===device){device=null;if(mode()==='usb'){pref.auto=false;save();message('USB 已中斷，請到列印設定重新連接；若已有部分紙本請確認後補印。')}}});
+})();
+
+</script><script data-staff-navigation-fullscreen="v1">
+(function(){
+ function enter(){
+  var root=document.documentElement;
+  if(document.fullscreenElement||document.webkitFullscreenElement||document.webkitCurrentFullScreenElement)return;
+  var method=root.requestFullscreen||root.webkitRequestFullscreen||root.webkitRequestFullScreen;
+  if(!method)return;
+  try{var result=method.call(root);if(result&&typeof result.catch==='function')result.catch(function(){toast('瀏覽器未允許全螢幕，仍可正常操作工作台。');});}catch(error){toast('無法進入全螢幕，請使用全螢幕按鈕。');}
+ }
+ function route(url){
+  var parsed=new URL(url,location.href);
+  path=parsed.searchParams.get('page')||'/';
+  table=Number(parsed.searchParams.get('table'))||0;
+  state.rows=[];state.report=null;state.drawer=false;
+  document.body.classList.remove('guest-ordering');
+  closeModal();load();
+ }
+ document.addEventListener('click',function(event){
+  if(['admin','cashier','kitchen'].indexOf(state.role)===-1||event.defaultPrevented||event.button>0||event.ctrlKey||event.metaKey||event.shiftKey||event.altKey)return;
+  var link=event.target.closest?event.target.closest('.admin-nav a'):null;
+  if(!link||link.target==='_blank')return;
+  var raw=link.getAttribute('href');
+  if(!raw||raw==='/'&&!window.siteHref)return;
+  var destination=raw.charAt(0)==='/'?siteHref(raw):raw;
+  var target=new URL(destination,location.href);
+  if(target.origin!==location.origin||target.pathname!==location.pathname)return;
+  event.preventDefault();enter();
+  history.pushState({staffNavigation:true},'',target.href);
+  route(target.href);
+ },true);
+ window.addEventListener('popstate',function(){route(location.href);});
+})();
+</script></body></html>
+
+
+
+
+
