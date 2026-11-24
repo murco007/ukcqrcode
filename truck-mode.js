@@ -18,8 +18,8 @@
     @media(max-width:1000px){.truck-orders{grid-template-columns:repeat(3,minmax(0,1fr))}}
     @media(max-width:700px){.truck-orders{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.truck-order-head{padding:12px}.truck-order-body{padding:4px 12px}.truck-order-head strong{font-size:20px}}
     @media(max-width:420px){.truck-orders{grid-template-columns:1fr}}
-    .pickup-header-group{display:flex;flex-direction:column;align-items:flex-end;gap:3px;max-width:min(100%,420px)}
-    .pickup-reminder{display:block;color:#b42318;font-size:12px;font-weight:700;line-height:1.35;text-align:right;white-space:normal}
+    .platform-credit{display:flex;justify-content:center;align-items:center;gap:8px;margin-top:12px;color:var(--green);font-size:14px;font-weight:700}
+    .platform-credit img{width:30px;height:30px;object-fit:contain}
   `;
   document.head.appendChild(style);
 
@@ -112,7 +112,7 @@
 
   header = function () {
     return '<header class="app-header"><a class="brand" href="/"><img class="brand-logo" src="./brand-logo.svg" alt="碗粿張標誌"><div><strong>碗粿張</strong><small>北屯昌平・傳統古早味</small></div></a><div class="header-right">' +
-      (path === '/' ? '<div class="pickup-header-group">' + pickupMarkup() + '<small class="pickup-reminder">請隨時注意取餐狀況；若關閉頁面，重新掃描 QR Code 即可顯示。</small></div>' : '<span class="subtle">餐車營運管理</span>' + connection() + '<button class="link-button" data-action="logout">登出</button>') +
+      (path === '/' ? pickupMarkup() : '<span class="subtle">餐車營運管理</span>' + connection() + '<button class="link-button" data-action="logout">登出</button>') +
       '</div></header>';
   };
 
@@ -141,7 +141,7 @@
       '</select></div><div class="category-foot">選好餐點後送出訂單，記下取餐號碼，再至櫃檯結帳。</div></aside><main>' +
       '<section class="hero"><div class="hero-copy"><div class="eyebrow">TAICHUNG · TRADITIONAL TAIWANESE FOOD</div><h1>一碗古早味，<br>慢慢品台灣。</h1><p>碗粿張，把熟悉的米香端上桌。</p><span class="pill" style="display:inline-block;margin-top:13px;background:#ffffffb8;font-size:12px">傳統碗粿 · 台灣米食 · 暖心湯品</span></div></section>' +
       '<div class="section-heading"><h2 id="menu-heading">' + esc(state.category) + '</h2><input class="search" id="search" placeholder="搜尋餐點" aria-label="搜尋餐點" value="' + esc(state.query) + '"></div>' +
-      '<div class="menu-grid" id="menu-grid">' + foodCards() + '</div><p class="source-note">餐點與售價目前為建置用初始範例，店主確認前均不開放點餐；請先於後台「餐點管理」核對品項與價格。</p><footer class="developer-credit"><span>碗粿張 QR 點餐・<a href="https://www.facebook.com/profile.php?id=61551696695325" target="_blank" rel="noopener">官方粉絲專頁</a>・<a href="https://maps.google.com/?q=24.1651821,120.6940609" target="_blank" rel="noopener">Google 地圖</a></span></footer></main>' +
+      '<div class="menu-grid" id="menu-grid">' + foodCards() + '</div><footer class="developer-credit"><span>碗粿張 QR 點餐・<a href="https://www.facebook.com/profile.php?id=61551696695325" target="_blank" rel="noopener">官方粉絲專頁</a>・<a href="https://maps.google.com/?q=24.1651821,120.6940609" target="_blank" rel="noopener">Google 地圖</a></span><span class="platform-credit"><img src="./platform-logo.svg" alt=""><strong>碼上有單數位整合</strong></span></footer></main>' +
       '<aside id="cart" class="cart ' + (state.drawer ? 'show' : '') + '">' + cartContent() + '</aside></div>' +
       '<button class="mobile-cart" data-action="drawer"><span>我的點餐清單・' + count + ' 項</span><strong>' + money(cartTotal()) + '</strong></button>';
   };
