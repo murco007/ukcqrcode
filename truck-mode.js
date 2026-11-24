@@ -82,7 +82,7 @@
       '</select></div><div class="category-foot">選好餐點後送出訂單，記下流水號，再至櫃檯結帳。</div></aside><main>' +
       '<section class="hero"><div class="hero-copy"><div class="eyebrow">TAICHUNG · TRADITIONAL TAIWANESE FOOD</div><h1>一碗古早味，<br>慢慢品台灣。</h1><p>碗粿張，把熟悉的米香端上桌。</p><span class="pill" style="display:inline-block;margin-top:13px;background:#ffffffb8;font-size:12px">傳統碗粿 · 台灣米食 · 暖心湯品</span></div></section>' +
       '<div class="section-heading"><h2 id="menu-heading">' + esc(state.category) + '</h2><input class="search" id="search" placeholder="搜尋餐點" aria-label="搜尋餐點" value="' + esc(state.query) + '"></div>' +
-      '<div class="menu-grid" id="menu-grid">' + foodCards() + '</div><footer class="developer-credit"><span>碗粿張QR 點餐</span></footer></main>' +
+      '<div class="menu-grid" id="menu-grid">' + foodCards() + '</div><p class="source-note">餐點與售價目前為建置用初始範例，店主確認前均不開放點餐；請先於後台「餐點管理」核對品項與價格。</p><footer class="developer-credit"><span>碗粿張 QR 點餐・<a href="https://www.facebook.com/profile.php?id=61551696695325" target="_blank" rel="noopener">官方粉絲專頁</a>・<a href="https://maps.google.com/?q=24.1651821,120.6940609" target="_blank" rel="noopener">Google 地圖</a></span></footer></main>' +
       '<aside id="cart" class="cart ' + (state.drawer ? 'show' : '') + '">' + cartContent() + '</aside></div>' +
       '<button class="mobile-cart" data-action="drawer"><span>我的點餐清單・' + count + ' 項</span><strong>' + money(cartTotal()) + '</strong></button>';
   };
