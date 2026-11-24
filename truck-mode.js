@@ -117,7 +117,7 @@
       state.cart = []; persist(); state.drawer = false;
       modal('<div class="truck-confirm"><h2>訂單已送出</h2><div>請記下您的取餐號碼</div><div class="truck-confirm-number">' + esc(String(result.serial).padStart(4,'0')) + '</div><hr>' +
         orderItems.map(x => { const p=state.menu.find(y=>y.id===x.id); return '<div class="row"><span>' + esc(p?.name || '') + ' × ' + x.qty + (x.note ? '<div class="note">' + esc(x.note) + '</div>' : '') + '</span><b>' + money((p?.price || x.price) * x.qty) + '</b></div>'; }).join('') +
-        '<div class="row" style="margin-top:14px"><strong>合計</strong><strong>' + money(orderItems.reduce((sum,x)=>sum+x.price*x.qty,0)) + '</strong></div><p class="checkout-reminder">請至櫃檯依取餐號碼結帳</p></div><div class="modal-actions"><button class="btn" data-action="close">完成</button></div>');
+        '<div class="row" style="margin-top:14px"><strong>合計</strong><strong>' + money(orderItems.reduce((sum,x)=>sum+x.price*x.qty,0)) + '</strong></div><p class="checkout-reminder">訂單待付款／待櫃檯確認；確認收款後廚房才會出單</p></div><div class="modal-actions"><button class="btn" data-action="close">完成</button></div>');
     } catch (error) {
       toast(error.message);
       if (error.status === 409) {
@@ -127,14 +127,14 @@
     } finally { busy=false; renderGuest(); }
   };
 
-  function latestOrders() {
-    return grouped().sort((a,b)=>Number(b.serial||0)-Number(a.serial||0)).slice(0,10);
+  function latestOrders(kitchenView) {
+    return grouped().filter(order => !kitchenView || order.status === 'paid').sort((a,b)=>Number(b.serial||0)-Number(a.serial||0)).slice(0,10);
   }
 
   function orderCard(order, kitchenView) {
     const allServed=order.lines.every(line=>Number(line.served)===1 || line.served===true);
     const paid=order.status==='paid';
-    return '<article class="truck-order"><div class="truck-order-head"><div><strong>' + esc(billTitle(order)) + '</strong><div class="truck-slot">' + time(order.opened_at) + '</div></div><div><span class="status ' + (paid?'done':'') + '">' + (paid?'已結帳':'待結帳') + '</span><br><span class="status ' + (allServed?'done':'') + '">' + (allServed?'已出餐':'製作中') + '</span></div></div><div class="truck-order-body">' +
+    return '<article class="truck-order"><div class="truck-order-head"><div><strong>' + esc(billTitle(order)) + '</strong><div class="truck-slot">' + time(order.opened_at) + '</div></div><div><span class="status ' + (paid?'done':'') + '">' + (paid?'已結帳':'待付款') + '</span><br><span class="status ' + (allServed?'done':'') + '">' + (allServed?'已出餐':'製作中') + '</span></div></div><div class="truck-order-body">' +
       order.lines.map(line => kitchenView ?
         '<div class="serve-line"><input type="checkbox" id="serve-' + esc(line.line_id) + '" data-serve="' + esc(line.line_id) + '" ' + (line.served?'checked':'') + '><label for="serve-' + esc(line.line_id) + '"><strong class="' + (line.served?'done-name':'') + '">' + esc(line.name) + ' × ' + line.qty + '</strong>' + (line.note?'<div class="note">' + esc(line.note) + '</div>':'') + '</label></div>' :
         '<div class="truck-line"><div class="row"><span>' + esc(line.name) + ' × ' + line.qty + '</span><b>' + money(line.price*line.qty) + '</b></div>' + (line.note?'<div class="note">' + esc(line.note) + '</div>':'') + '<div class="subtle">' + (line.served?'已出餐':'待出餐') + '</div></div>'
@@ -145,10 +145,11 @@
   }
 
   function orderBoard(kitchenView) {
-    const orders=latestOrders();
+    const orders=latestOrders(kitchenView);
     const title=kitchenView?'廚房出餐':'前台結帳';
+    const emptyText=kitchenView?'付款確認後，廚房訂單會顯示在這裡。':'客人送出訂單後會顯示在這裡。';
     return pageTop(title,'最新訂單固定顯示在第一格，畫面保留最近 10 張。','<span class="pill">目前 ' + orders.length + ' / 10 張</span>') +
-      '<div class="truck-orders">' + (orders.length ? orders.map(o=>orderCard(o,kitchenView)).join('') : '<div class="panel empty truck-empty"><span class="empty-icon">🍲</span><h3>目前沒有訂單</h3>客人送出訂單後會顯示在這裡。</div>') + '</div>';
+      '<div class="truck-orders">' + (orders.length ? orders.map(o=>orderCard(o,kitchenView)).join('') : '<div class="panel empty truck-empty"><span class="empty-icon">🍲</span><h3>目前沒有訂單</h3>' + emptyText + '</div>') + '</div>';
   }
   cashier = () => orderBoard(false);
   kitchen = () => orderBoard(true);
