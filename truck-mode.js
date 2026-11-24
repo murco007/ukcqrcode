@@ -114,7 +114,7 @@
 
   header = function () {
     return '<header class="app-header"><a class="brand" href="/"><img class="brand-logo" src="./brand-logo.svg" alt="碗粿張標誌"><div><strong>碗粿張</strong><small>北屯昌平・傳統古早味</small></div></a><div class="header-right">' +
-      (path === '/' ? '<div class="pickup-header-group">' + pickupMarkup() + '<small class="pickup-reminder">隨時注意取餐狀況；如關閉頁面，重新掃描 QR Code 即可查看。</small></div>' : '<span class="subtle">餐車營運管理</span>' + connection() + '<button class="link-button" data-action="logout">登出</button>') +
+      (path === '/' ? '<div class="pickup-header-group">' + pickupMarkup() + '<small class="pickup-reminder">隨時注意取餐狀況，關閉重掃 QR Code</small></div>' : '<span class="subtle">餐車營運管理</span>' + connection() + '<button class="link-button" data-action="logout">登出</button>') +
       '</div></header>';
   };
 
