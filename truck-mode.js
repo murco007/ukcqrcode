@@ -18,6 +18,8 @@
     @media(max-width:1000px){.truck-orders{grid-template-columns:repeat(3,minmax(0,1fr))}}
     @media(max-width:700px){.truck-orders{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.truck-order-head{padding:12px}.truck-order-body{padding:4px 12px}.truck-order-head strong{font-size:20px}}
     @media(max-width:420px){.truck-orders{grid-template-columns:1fr}}
+    .pickup-header-group{display:flex;flex-direction:column;align-items:flex-end;gap:3px;max-width:min(100%,420px)}
+    .pickup-reminder{display:block;color:#b42318;font-size:12px;font-weight:700;line-height:1.35;text-align:right;white-space:normal}
   `;
   document.head.appendChild(style);
 
@@ -110,7 +112,7 @@
 
   header = function () {
     return '<header class="app-header"><a class="brand" href="/"><img class="brand-logo" src="./brand-logo.svg" alt="碗粿張標誌"><div><strong>碗粿張</strong><small>北屯昌平・傳統古早味</small></div></a><div class="header-right">' +
-      (path === '/' ? pickupMarkup() : '<span class="subtle">餐車營運管理</span>' + connection() + '<button class="link-button" data-action="logout">登出</button>') +
+      (path === '/' ? '<div class="pickup-header-group">' + pickupMarkup() + '<small class="pickup-reminder">請隨時注意取餐狀況；若關閉頁面，重新掃描 QR Code 即可顯示。</small></div>' : '<span class="subtle">餐車營運管理</span>' + connection() + '<button class="link-button" data-action="logout">登出</button>') +
       '</div></header>';
   };
 
