@@ -78,8 +78,8 @@
   function savedTicket() { loadTicket(); return latestTicket; }
   function pickupMarkup() {
     const serial = savedTicket();
-    const stateText = serial ? (readyForPickup ? '餐點已備妥' : '製作中') : '送單後顯示';
-    return '<div class="pickup-display ' + (readyForPickup ? 'pickup-ready' : '') + '" aria-live="polite"><span>目前</span><strong>' + (serial ? String(serial).padStart(4, '0') : '—') + '</strong><span>取餐</span><small>' + stateText + '</small></div>';
+    const stateText = serial ? (readyForPickup ? '可取餐' : '製作中') : '送單後顯示';
+    return '<div class="pickup-display ' + (readyForPickup ? 'pickup-ready' : '') + '" aria-live="polite"><span>你的單號</span><strong>' + (serial ? String(serial).padStart(4, '0') : '—') + '</strong><small>' + stateText + '</small></div>';
   }
   function updatePickupMarkup() {
     const current = document.querySelector('.pickup-display');
