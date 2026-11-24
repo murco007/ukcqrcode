@@ -22,31 +22,42 @@
   document.head.appendChild(style);
 
   const ticketBase = 'ukcqrcode-truck-ticket:' + rootUrl.pathname + ':';
-  const ticketKey = ticketBase + today();
   const ticketLegacy = 'ukcqrcode-truck-ticket-v1:' + rootUrl.pathname + ':';
+  let latestDate = today();
   let latestTicket = 0;
 
-  // 清除此瀏覽器先前日期與舊版的取餐號碼，只保留今日最後一筆。
-  try {
-    for (let i = localStorage.length - 1; i >= 0; i--) {
-      const key = localStorage.key(i);
-      if (key?.startsWith(ticketLegacy) || (key?.startsWith(ticketBase) && key !== ticketKey)) {
-        localStorage.removeItem(key);
-      }
+  function clearOldTickets() {
+    const date = today();
+    const key = ticketBase + date;
+    if (date !== latestDate) {
+      latestDate = date;
+      latestTicket = 0;
     }
-    latestTicket = Number(localStorage.getItem(ticketKey)) || 0;
+    try {
+      for (let i = localStorage.length - 1; i >= 0; i--) {
+        const storedKey = localStorage.key(i);
+        if (storedKey?.startsWith(ticketLegacy) || (storedKey?.startsWith(ticketBase) && storedKey !== key)) {
+          localStorage.removeItem(storedKey);
+        }
+      }
+    } catch {}
+    return key;
+  }
+
+  try {
+    latestTicket = Number(localStorage.getItem(clearOldTickets())) || 0;
   } catch {}
 
   function rememberTicket(serial) {
     if (!Number.isSafeInteger(serial) || serial < 1) return;
     latestTicket = serial;
-    try { localStorage.setItem(ticketKey, String(serial)); } catch {}
+    try { localStorage.setItem(clearOldTickets(), String(serial)); } catch {}
   }
 
   function savedTicket() {
     try {
-      const stored = Number(localStorage.getItem(ticketKey));
-      if (Number.isSafeInteger(stored) && stored > 0) latestTicket = stored;
+      const stored = Number(localStorage.getItem(clearOldTickets()));
+      latestTicket = Number.isSafeInteger(stored) && stored > 0 ? stored : 0;
     } catch {}
     return latestTicket;
   }
