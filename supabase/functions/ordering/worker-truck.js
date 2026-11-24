@@ -282,7 +282,7 @@ async function api(req,env,u){
  }
  if(path==='/api/menu-save'&&req.method==='POST'){
   const name=String(b.name||'').trim(),description=String(b.description||'').trim(),image=String(b.image||'');
-  if(!name||name.length>80||description.length>500||!['原味燉盅','暖心套餐','廣東腸粉','飯麵主食','私房小菜','家傳甜湯'].includes(b.category)||!Number.isInteger(b.price)||b.price<0||b.price>99999||typeof b.available!=='boolean')fail('請確認名稱、分類與價格。');
+  if(!name||name.length>80||description.length>500||!['古早味碗粿','米食主食','湯品小菜'].includes(b.category)||!Number.isInteger(b.price)||b.price<0||b.price>99999||typeof b.available!=='boolean')fail('請確認名稱、分類與價格。');
   if(image.length>700000||image&&!/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/]+=*$/.test(image)&&!/^https:\/\/[^\s"<>]+$/.test(image)&&!MENU.some(p=>p.image===image))fail('請上傳圖片或使用 HTTPS 圖片網址。');
   const products=await menu(db);if(b.id&&!products.some(p=>p.id===b.id))fail('找不到餐點。',404);const id=b.id||'custom-'+crypto.randomUUID();
   await db.batch([db.prepare('INSERT INTO menu_custom(id,name,category,description,image,price,available) VALUES(?,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET name=excluded.name,category=excluded.category,description=excluded.description,image=excluded.image,price=excluded.price,available=excluded.available').bind(id,name,b.category,description,image,b.price,b.available?1:0),db.prepare('DELETE FROM menu_overrides WHERE id=?').bind(id)]);return json({ok:true,id});
