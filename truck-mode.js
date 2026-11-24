@@ -52,7 +52,7 @@
   }
 
   header = function () {
-    return '<header class="app-header"><a class="brand" href="/"><span class="seal">湯</span><div><strong>碗粿張</strong><small>餐車版 QR 點餐</small></div></a><div class="header-right">' +
+    return '<header class="app-header"><a class="brand" href="/"><img class="brand-logo" src="./brand-logo.svg" alt="碗粿張標誌"><div><strong>碗粿張</strong><small>北屯昌平・傳統古早味</small></div></a><div class="header-right">' +
       (path === '/' ? '<button type="button" class="btn small secondary" data-truck-tickets>我的流水號</button>' : '<span class="subtle">餐車營運管理</span>' + connection() + '<button class="link-button" data-action="logout">登出</button>') +
       '</div></header>';
   };
@@ -80,9 +80,9 @@
       '<div class="guest-layout"><aside class="categories"><div class="eyebrow">MENU</div><h3>選擇餐點</h3><div class="category-picker"><label for="category-choice">餐點分類</label><select id="category-choice">' +
       categories.map(c => '<option value="' + esc(c) + '"' + (state.category === c ? ' selected' : '') + '>' + esc(c) + '</option>').join('') +
       '</select></div><div class="category-foot">選好餐點後送出訂單，記下流水號，再至櫃檯結帳。</div></aside><main>' +
-      '<section class="hero"><div class="hero-copy"><div class="eyebrow">SOUP MASTER FOOD TRUCK</div><h1>碗粿張餐車版<br>QR 點餐</h1><p>選好餐點・送出訂單・依流水號結帳</p><span class="pill" style="display:inline-block;margin-top:13px;background:#ffffffa8;font-size:12px">送單後請記下自己的流水號</span></div><img src="https://tb-static.uber.com/prod/image-proc/processed_images/74363da08811b237f69d99b887897bfd/a19bb09692310dfd41e49a96c424b3a6.jpeg" alt="碗粿張燉湯"></section>' +
+      '<section class="hero"><div class="hero-copy"><div class="eyebrow">TAICHUNG · TRADITIONAL TAIWANESE FOOD</div><h1>一碗古早味，<br>慢慢品台灣。</h1><p>碗粿張，把熟悉的米香端上桌。</p><span class="pill" style="display:inline-block;margin-top:13px;background:#ffffffb8;font-size:12px">傳統碗粿 · 台灣米食 · 暖心湯品</span></div></section>' +
       '<div class="section-heading"><h2 id="menu-heading">' + esc(state.category) + '</h2><input class="search" id="search" placeholder="搜尋餐點" aria-label="搜尋餐點" value="' + esc(state.query) + '"></div>' +
-      '<div class="menu-grid" id="menu-grid">' + foodCards() + '</div><footer class="developer-credit"><span>碗粿張餐車版 QR 點餐</span></footer></main>' +
+      '<div class="menu-grid" id="menu-grid">' + foodCards() + '</div><footer class="developer-credit"><span>碗粿張QR 點餐</span></footer></main>' +
       '<aside id="cart" class="cart ' + (state.drawer ? 'show' : '') + '">' + cartContent() + '</aside></div>' +
       '<button class="mobile-cart" data-action="drawer"><span>我的點餐清單・' + count + ' 項</span><strong>' + money(cartTotal()) + '</strong></button>';
   };
