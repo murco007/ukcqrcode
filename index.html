@@ -304,7 +304,7 @@ window.__startTruckApp=()=>{load();setInterval(refresh,2500)};
  const owner=localStorage.getItem('cloud-print-owner')||Array.from(crypto.getRandomValues(new Uint8Array(16)),x=>x.toString(16).padStart(2,'0')).join('');localStorage.setItem('cloud-print-owner',owner);
  const save=()=>localStorage.setItem(prefsKey,JSON.stringify(pref));
  const kind=()=>state.role==='kitchen'?'kitchen':state.role==='cashier'?'receipt':path==='/kitchen'?'kitchen':path==='/cashier'?'receipt':pref.work||'receipt';
- const queueKinds=()=>state.role==='cashier'?['kitchen_cashier','receipt']:[kind()];
+ const queueKinds=()=>state.role==='cashier'?['kitchen','kitchen_cashier','receipt']:[kind()];
  const allowed=()=>state.role==='admin'||state.role===(kind()==='kitchen'?'kitchen':'cashier');
  function message(s){lastMessage=s;const t=document.getElementById('cp-status');if(t)t.textContent=s;}
  async function call(url,body){const r=await cloudFetch(url,{method:body?'POST':'GET',headers:body?{'Content-Type':'application/json'}:{},body:body?JSON.stringify(body):undefined});const j=await r.json();if(!r.ok)throw Error(j.error||'列印連線失敗');return j;}
