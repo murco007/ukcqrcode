@@ -171,7 +171,7 @@ async function api(req,env,u){
  if(path==='/api/logout'&&req.method==='POST')return json({ok:true},200,{'Set-Cookie':'staff=; HttpOnly; '+(env.LAN_MODE?'':'Secure; ')+'SameSite=Strict; Path=/; Max-Age=0'});
  if(path==='/api/menu'&&req.method==='GET')return json({menu:await menu(db),role,canManageStaff:staffOwner(identity),username:identity?.username||'',displayName:identity?.name||'',sourceDate:'2026-11-19'});
  if(path==='/api/table'&&req.method==='GET'){if(!role)fail('請先登入員工後台。',401);const t=Number(u.searchParams.get('table'));if(!validTable(t))fail('桌號必須為 1–10');return json(await tableState(db,t));}
- if(path==='/api/order'&&req.method==='POST'){
+ if(path==='/api/order/status'&&req.method==='GET'){const requestId=String(u.searchParams.get('requestId')||'');if(!/^[a-zA-Z0-9-]{16,64}$/.test(requestId))fail('取餐資料錯誤。');const row=await db.prepare('SELECT b.serial,b.status,COUNT(l.id) AS line_count,SUM(CASE WHEN l.served=1 THEN 1 ELSE 0 END) AS served_count FROM lines source JOIN bills b ON b.id=source.bill_id JOIN lines l ON l.bill_id=b.id WHERE source.id LIKE ? GROUP BY b.id').bind(requestId+'-%').first();if(!row)fail('找不到此取餐號碼。',404);const lineCount=Number(row.line_count),servedCount=Number(row.served_count);return json({serial:Number(row.serial),status:row.status,ready:row.status==='paid'&&lineCount>0&&lineCount===servedCount});} if(path==='/api/order'&&req.method==='POST'){
   if(!/^[a-zA-Z0-9-]{16,64}$/.test(b.requestId||''))fail('缺少送單識別碼。');
   if(!Array.isArray(b.items)||!b.items.length||b.items.length>30)fail('請選擇 1–30 項餐點。');
   const products=await menu(db),stamp=now();
