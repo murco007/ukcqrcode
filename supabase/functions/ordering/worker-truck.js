@@ -191,6 +191,30 @@ async function api(req,env,u){
  }
  if(!role)fail('請先登入員工後台。',401);
 
+ if(path==='/api/staff/change-password'&&req.method==='POST'){
+  if(!staffOwner(identity))fail('僅 murco007 可更改店主密碼。',403);
+  const currentPin=String(b.currentPin||''),newPin=String(b.newPin||''),confirmPin=String(b.confirmPin||'');
+  if(currentPin.length<1||currentPin.length>40)fail('請輸入目前密碼。');
+  if(newPin.length<5||newPin.length>40||new TextEncoder().encode(newPin).length>72)fail('新密碼需為 5–40 字（最多 72 位元組）。');
+  if(newPin!==confirmPin)fail('兩次輸入的新密碼不一致。');
+  const owner=await db.prepare("SELECT * FROM staff_accounts WHERE id='owner' AND username='murco007' AND role='admin' AND active=1").first();
+  if(!owner)fail('找不到店主帳號。',404);
+  let valid=false;
+  if(owner.password_scheme==='bcrypt')valid=(await db.prepare('SELECT extensions.crypt(?,?) = ? AS valid').bind(currentPin,owner.password_hash,owner.password_hash).first())?.valid===true;
+  else if(owner.password_scheme==='legacy')valid=await signature(currentPin,env.ADMIN_PASSWORD_SALT)===owner.password_hash;
+  if(!valid){
+   const ip=req.headers.get('cf-connecting-ip')||'local',key=await signature(ip,env.SESSION_SECRET),bucket=Math.floor(Date.now()/600000);
+   await db.prepare('INSERT INTO login_attempts(key,attempts,window_bucket) VALUES(?,1,?) ON CONFLICT(key) DO UPDATE SET attempts=CASE WHEN window_bucket=? THEN attempts+1 ELSE 1 END, window_bucket=?').bind(key,bucket,bucket,bucket).run();
+   const attempts=await db.prepare('SELECT attempts FROM login_attempts WHERE key=?').bind(key).first();
+   if(attempts?.attempts>12)fail('嘗試次數過多，請於 10 分鐘後重試。',429);
+   fail('目前密碼不正確。',401);
+  }
+  if(currentPin===newPin)fail('新密碼必須與目前密碼不同。');
+  const hash=(await db.prepare("SELECT extensions.crypt(?,extensions.gen_salt('bf',10)) AS hash").bind(newPin).first()).hash;
+  await db.prepare("UPDATE staff_accounts SET password_hash=?,password_scheme='bcrypt' WHERE id='owner' AND username='murco007' AND role='admin' AND active=1").bind(hash).run();
+  await db.prepare("DELETE FROM staff_sessions WHERE account_id='owner'").run();
+  return json({ok:true});
+ }
  if(path==='/api/staff'||path==='/api/staff/save'||path==='/api/staff/delete'){
   if(!staffOwner(identity))fail('僅 murco007 可管理人員。',403);
   if(path==='/api/staff'&&req.method==='GET')return json({staff:(await db.prepare("SELECT id,name,username,role,created_at FROM staff_accounts WHERE id<>'owner' AND active=1 ORDER BY created_at,id").all()).results});
