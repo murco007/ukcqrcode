@@ -378,11 +378,14 @@ window.__startTruckApp=()=>{load();setInterval(refresh,2500)};
  const windowsPC=/Windows/i.test(navigator.userAgent);
 
  const appleMobile=/iPhone|iPad|iPod/i.test(navigator.userAgent)||/Macintosh/i.test(navigator.userAgent)&&navigator.maxTouchPoints>1;
- const defaultTransport=windowsPC?'windows':navigator.usb?'usb':'system';
- const mode=()=>['windows','usb','serial','ble','system'].includes(pref.transport)?pref.transport:defaultTransport;
+ const defaultTransport=window.AndroidHost&&AndroidHost.isAvailable()?'android-host':windowsPC?'windows':navigator.usb?'usb':'system';
+ const mode=()=>['windows','usb','serial','ble','android-host','system'].includes(pref.transport)?pref.transport:defaultTransport;
  let serialPort=null,bleDevice=null,bleCharacteristic=null;
- const transportNames={windows:'Windows 驅動 USB',usb:'USB 直接列印',serial:'藍牙 SPP',ble:'藍牙 BLE',system:'系統列印／AirPrint（手動）'};
+ const transportNames={windows:'Windows 驅動 USB',usb:'USB 直接列印',serial:'藍牙 SPP',ble:'藍牙 BLE','android-host':'Android 6 原生 USB',system:'系統列印／AirPrint（手動）'};
  function receiptParts(job){return [new Uint8Array([27,64]),...core.bands(job,pref.narrow?384:576),new Uint8Array([27,100,4]),...(pref.cut!==false?[new Uint8Array([29,86,66,0])]:[])];}
+ let androidPrintSequence=0;const androidPrintPending=new Map();
+ window.__ukcAndroidPrintResult=(id,ok,detail)=>{const pending=androidPrintPending.get(id);if(!pending)return;androidPrintPending.delete(id);clearTimeout(pending.timer);ok?pending.resolve():pending.reject(new Error(detail||'Android USB 列印失敗'));};
+ function sendAndroid(job){if(!window.AndroidHost||!AndroidHost.isAvailable())return Promise.reject(Error('原生 Android 列印橋接未就緒。'));if(!AndroidHost.isReady())return Promise.reject(Error('請先到「列印設定」連接 USB 印表機並允許存取。'));const id='ukc-'+Date.now()+'-'+(++androidPrintSequence);return new Promise((resolve,reject)=>{const pending={resolve,reject,timer:setTimeout(()=>{androidPrintPending.delete(id);reject(Error('Android USB 列印逾時；請確認紙本後再處理。'));},90000)};androidPrintPending.set(id,pending);try{AndroidHost.printJob(id,JSON.stringify(job));}catch(error){clearTimeout(pending.timer);androidPrintPending.delete(id);reject(error);}});}
  function bluetoothLost(type){if(mode()!==type)return;pref.auto=false;save();message('藍牙已中斷，請到列印設定重新連接；請確認紙本後再補印。');}
  function uuid(value,label){const raw=String(value||'').trim().toLowerCase();if(/^[a-f0-9]{4,8}$/.test(raw))return parseInt(raw,16);if(/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/.test(raw))return raw;throw Error('請依印表機規格填寫正確的 '+label+' UUID。');}
  async function connectSerial(){
@@ -424,6 +427,7 @@ window.__startTruckApp=()=>{load();setInterval(refresh,2500)};
   message('已中斷目前連線，自動列印已關閉。');
  }
  function connectionOptions(){return [
+  ...(window.AndroidHost&&AndroidHost.isAvailable()?[['android-host','Android 6 APK 原生 USB 列印',true]]:[]),
   ...(windowsPC?[['windows','Windows USB（已安裝驅動）',true]]:[]),
   ['usb','USB 直接連接（Android OTG／支援的 Chrome）',!!navigator.usb],
   ['serial','藍牙：傳統 SPP',!!navigator.serial?.requestPort],
@@ -437,7 +441,7 @@ window.__startTruckApp=()=>{load();setInterval(refresh,2500)};
  function syncPlatformSettings(p){
   const selector=p.querySelector('#cp-transport');if(!selector)return;
   const type=mode(),help=p.querySelector('#cp-transport-help');
-  const tips={windows:'使用已安裝的 Windows 驅動。請啟動本機列印程式，展開下方 Windows USB 連線並貼上配對碼。',usb:'Android 手機／平板需支援 USB OTG，使用 OTG 線或轉接頭連接印表機，並允許 Chrome 存取 USB。',serial:'先在系統藍牙設定配對印表機，再按連接。需瀏覽器提供 Web Serial 藍牙 SPP；舊版 Android／Chrome 可能不支援。',ble:'需印表機支援 BLE。請依廠商規格填寫 Service 與可寫入的 Characteristic UUID，再搜尋連接；傳統藍牙 SPP 印表機請選 SPP。',system:appleMobile?'使用 iPhone／iPad 的 AirPrint；印表機須支援 AirPrint，且與裝置在相同網路。需手動確認，無法以本頁自動出單。':'使用系統列印視窗，選擇已安裝或 AirPrint 印表機。需手動確認，無法以此模式自動出單。'};
+  const tips={'android-host':'使用此 Android 6 APK 的原生 USB OTG 列印。請先連接印表機，在上方按「連接印表機」設定並允許 USB，再測試出紙。',windows:'使用已安裝的 Windows 驅動。請啟動本機列印程式，展開下方 Windows USB 連線並貼上配對碼。',usb:'Android 手機／平板需支援 USB OTG，使用 OTG 線或轉接頭連接印表機，並允許 Chrome 存取 USB。',serial:'先在系統藍牙設定配對印表機，再按連接。需瀏覽器提供 Web Serial 藍牙 SPP；舊版 Android／Chrome 可能不支援。',ble:'需印表機支援 BLE。請依廠商規格填寫 Service 與可寫入的 Characteristic UUID，再搜尋連接；傳統藍牙 SPP 印表機請選 SPP。',system:appleMobile?'使用 iPhone／iPad 的 AirPrint；印表機須支援 AirPrint，且與裝置在相同網路。需手動確認，無法以本頁自動出單。':'使用系統列印視窗，選擇已安裝或 AirPrint 印表機。需手動確認，無法以此模式自動出單。'};
   if(help.textContent!==tips[type])help.textContent=tips[type];
   p.querySelector('#cp-ble-fields').hidden=type!=='ble';
   p.querySelector('#cp-transport-connect').hidden=type==='windows'||type==='system';
@@ -489,9 +493,9 @@ window.__startTruckApp=()=>{load();setInterval(refresh,2500)};
 
  function connectWindows(){const panel=ensureWindowsPair();panel.open=true;panel.querySelector('input').focus();message('請在 Windows USB 連線設定貼上配對碼。');}
 
- const ready=()=>mode()==='windows'?bridgeReady:mode()==='usb'?!!device?.opened:mode()==='serial'?!!serialPort?.writable:mode()==='ble'?!!(bleDevice?.gatt?.connected&&bleCharacteristic):false;
+ const ready=()=>mode()==='android-host'?!!(window.AndroidHost&&AndroidHost.isAvailable()&&AndroidHost.isReady()):mode()==='windows'?bridgeReady:mode()==='usb'?!!device?.opened:mode()==='serial'?!!serialPort?.writable:mode()==='ble'?!!(bleDevice?.gatt?.connected&&bleCharacteristic):false;
  async function sendConfigured(job){
-  const type=mode();if(type==='usb')return send(job);
+  const type=mode();if(type==='android-host')return sendAndroid(job);if(type==='usb')return send(job);
   if(type==='serial'||type==='ble'){
    if(!ready())throw Error('請先連接藍牙印表機。');
    const parts=receiptParts(job);if(parts.reduce((sum,part)=>sum+part.length,0)>8000000)throw Error('單據過長，請分批列印。');
@@ -511,6 +515,7 @@ window.__startTruckApp=()=>{load();setInterval(refresh,2500)};
 
  let connecting=false;
  async function connect(){
+  if(mode()==='android-host'){if(!window.AndroidHost||!AndroidHost.isAvailable())throw Error('請在碗粿張 Android 6 APK 中使用原生列印。');AndroidHost.openSettings();message('已開啟 Android USB 設定；選擇印表機並允許 USB 後，請先測試列印。');return;}
   if(mode()==='windows')return connectWindows();if(mode()==='serial')return connectSerial();if(mode()==='ble')return connectBLE();if(mode()==='system'){message('此模式請使用系統列印／AirPrint，無需 USB 配對。');return;}return connectUSB();
  }
  async function connectUSB(){
