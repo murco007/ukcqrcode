@@ -23,7 +23,7 @@ async function roleOf(req,env){return (await identityOf(req,env))?.role||null;}
 const staffOwner=identity=>identity?.id==='owner'&&identity?.username==='murco007'&&identity?.role==='admin';
 async function menu(db){const {results:overrides}=await db.prepare('SELECT * FROM menu_overrides').all();const {results:custom}=await db.prepare('SELECT * FROM menu_custom ORDER BY rowid').all();const {results:deleted}=await db.prepare('SELECT id FROM menu_deleted').all();const hidden=new Set(deleted.map(x=>x.id));const products=[...MENU,...custom.filter(p=>!MENU.some(x=>x.id===p.id))].filter(p=>!hidden.has(p.id));return products.map(p=>{const edit=custom.find(x=>x.id===p.id);const override=overrides.find(x=>x.id===p.id);return {...p,...edit,...override,available:(override?.available??edit?.available??(p.available===false?0:1))!==0}});}
 async function tableState(db,t){const state=await db.prepare('SELECT generation FROM dining_tables WHERE table_no=?').bind(t).first();const generation=state?.generation||1;const bill=await db.prepare("SELECT * FROM bills WHERE table_no=? AND generation=? AND status='open'").bind(t,generation).first();const lines=bill?(await db.prepare('SELECT * FROM lines WHERE bill_id=? ORDER BY created_at,id').bind(bill.id).all()).results:[];return {table:t,generation,bill,lines,total:lines.reduce((a,l)=>a+l.price*l.qty,0)};}
-async function printPayload(db,job){const bill=await db.prepare('SELECT b.*,'+preorderColumns+' FROM bills b LEFT JOIN preorders p ON p.bill_id=b.id WHERE b.id=?').bind(job.bill_id).first();const lines=(await db.prepare(job.kind==='kitchen'&&job.id.startsWith('order:')?'SELECT * FROM lines WHERE bill_id=? AND id LIKE ? ORDER BY created_at,id':'SELECT * FROM lines WHERE bill_id=? ORDER BY created_at,id').bind(...(job.kind==='kitchen'&&job.id.startsWith('order:')?[job.bill_id,job.id.slice(6)+'-%']:[job.bill_id])).all()).results;return {...job,bill,lines};}
+async function printPayload(db,job){const bill=await db.prepare('SELECT b.*,'+preorderColumns+' FROM bills b LEFT JOIN preorders p ON p.bill_id=b.id WHERE b.id=?').bind(job.bill_id).first();const orderRequestId=job.id.startsWith('order:')?job.id.slice(6):job.id.startsWith('cashier-order:')?job.id.slice(14):'';const lines=(await db.prepare(['kitchen','kitchen_cashier'].includes(job.kind)&&orderRequestId?'SELECT * FROM lines WHERE bill_id=? AND id LIKE ? ORDER BY created_at,id':'SELECT * FROM lines WHERE bill_id=? ORDER BY created_at,id').bind(...(['kitchen','kitchen_cashier'].includes(job.kind)&&orderRequestId?[job.bill_id,orderRequestId+'-%']:[job.bill_id])).all()).results;return {...job,bill,lines};}
 
 const preorderColumns='p.slot AS preorder_slot,p.pickup_code,p.pickup_date,p.channel AS preorder_channel,p.completed_at';
 function pickupDetails(body){
@@ -90,7 +90,7 @@ async function preorderApi(req,db,u,b,role,env){
 
 async function printingApi(req,db,u,b,role){
  const can=kind=>role==='admin'||role===(kind==='kitchen'?'kitchen':'cashier');
- if(u.pathname==='/api/print/receipt'&&req.method==='GET'){const kind=u.searchParams.get('kind')||'receipt';if(!['kitchen','receipt'].includes(kind)||!can(kind))fail('沒有列印權限',403);const id=u.searchParams.get('bill');if(!/^(?:(?:[1-9]|10)|P(?:[1-9]|10)):[1-9][0-9]{0,11}$/.test(id||''))fail('帳單編號錯誤');const bill=await db.prepare('SELECT * FROM bills WHERE id=?').bind(id).first();if(!bill)fail('找不到帳單',404);return json(await printPayload(db,{id:'manual:'+id,kind,bill_id:id,created_at:bill.paid_at||bill.opened_at}));}
+ if(u.pathname==='/api/print/receipt'&&req.method==='GET'){const kind=u.searchParams.get('kind')||'receipt';if(!['kitchen','kitchen_cashier','receipt'].includes(kind)||!can(kind))fail('沒有列印權限',403);const id=u.searchParams.get('bill');if(!/^(?:(?:[1-9]|10)|P(?:[1-9]|10)):[1-9][0-9]{0,11}$/.test(id||''))fail('帳單編號錯誤');const bill=await db.prepare('SELECT * FROM bills WHERE id=?').bind(id).first();if(!bill)fail('找不到帳單',404);return json(await printPayload(db,{id:'manual:'+id,kind,bill_id:id,created_at:bill.paid_at||bill.opened_at}));}
 
  if(u.pathname==='/api/print/jobs'&&req.method==='GET'){
   const kind=u.searchParams.get('kind');if(!['kitchen','receipt'].includes(kind)||!can(kind))fail('沒有列印權限',403);
@@ -113,10 +113,10 @@ async function printingApi(req,db,u,b,role){
   const day=u.searchParams.get('day')||dayNow();if(!/^\d{4}-\d{2}-\d{2}$/.test(day))fail('日期格式錯誤');
   const start=new Date(day+'T00:00:00+08:00');if(!Number.isFinite(start.getTime()))fail('日期格式錯誤');const end=new Date(start.getTime()+86400000);
   const bills=(await db.prepare("SELECT b.*,"+preorderColumns+",COALESCE(SUM(l.price*l.qty),0) AS total FROM bills b LEFT JOIN preorders p ON p.bill_id=b.id LEFT JOIN lines l ON l.bill_id=b.id WHERE b.opened_at>=? AND b.opened_at<? GROUP BY b.id,p.bill_id ORDER BY b.opened_at DESC LIMIT 500").bind(start.toISOString(),end.toISOString()).all()).results;
-  const jobs=(await db.prepare(role==='admin'?'SELECT * FROM print_jobs ORDER BY created_at DESC LIMIT 100':'SELECT * FROM print_jobs WHERE kind=? ORDER BY created_at DESC LIMIT 100').bind(...(role==='admin'?[]:[role==='kitchen'?'kitchen':'receipt'])).all()).results;return json({bills,jobs});
+  const historySql=role==='admin'?'SELECT * FROM print_jobs ORDER BY created_at DESC LIMIT 100':role==='kitchen'?"SELECT * FROM print_jobs WHERE kind='kitchen' ORDER BY created_at DESC LIMIT 100":"SELECT * FROM print_jobs WHERE kind IN ('receipt','kitchen_cashier') ORDER BY created_at DESC LIMIT 100";const jobs=(await db.prepare(historySql).all()).results;return json({bills,jobs});
  }
  if(u.pathname==='/api/print/reprint'&&req.method==='POST'){
-  if(!['kitchen','receipt'].includes(b.kind))fail('單據類型錯誤');if(!can(b.kind))fail('沒有列印權限',403);
+  if(!['kitchen','kitchen_cashier','receipt'].includes(b.kind))fail('單據類型錯誤');if(!can(b.kind))fail('沒有列印權限',403);
   const bill=await db.prepare('SELECT * FROM bills WHERE id=?').bind(String(b.billId)).first();if(!bill)fail('找不到訂單',404);
   if(b.kind==='receipt'&&bill.status!=='paid')fail('此帳單尚未結帳，請選擇點餐明細');
   const id='reprint:'+crypto.randomUUID();await db.prepare("INSERT INTO print_jobs(id,kind,bill_id,created_at,detail) VALUES(?,?,?,?,?)").bind(id,b.kind,bill.id,now(),'重印').run();return json({ok:true,id});
@@ -187,6 +187,7 @@ async function api(req,env,u){
   await db.prepare("INSERT INTO bills(id,table_no,generation,serial,status,opened_at,archived) VALUES(?,?,?,?,'open',?,false)").bind(billId,t,g,serial,stamp).run();
   await db.batch(items.map(x=>db.prepare('INSERT INTO lines(id,bill_id,product_id,name,price,qty,note,created_at,served) VALUES(?,?,?,?,?,?,?,?,0)').bind(x.id,billId,x.p.id,x.p.name,x.p.price,x.qty,x.note,stamp)));
   await db.prepare("INSERT INTO print_jobs(id,kind,bill_id,created_at) VALUES(?,'kitchen',?,?)").bind('order:'+b.requestId,billId,stamp).run();
+  await db.prepare("INSERT INTO print_jobs(id,kind,bill_id,created_at) VALUES(?,'kitchen_cashier',?,?)").bind('cashier-order:'+b.requestId,billId,stamp).run();
   return json({ok:true,id:billId,serial});
  }
  if(!role)fail('請先登入員工後台。',401);
