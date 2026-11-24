@@ -14,4 +14,4 @@ GitHub Pages 前台與 Supabase Ordering Edge Function 點餐系統。
 2. `cloud.js` 只包含 Supabase publishable key；不可將 service role key 或資料庫密碼放入前端。
 3. `supabase/functions/ordering/` 為訂單後端；GitHub Pages 由 `.github/workflows/pages.yml` 發佈。
 4. 菜單內容及價格是初始化範例，預設暫未上架；店主登入後請先至「餐點管理」核對與調整。
-5. 專案管理入口：`?page=/login`，帳號 `murco007`。初始 PIN 請以建立通知為準。
+5. 專案管理入口：`?page=/cashier`，帳號 `murco007`。初始 PIN 請以建立通知為準。
