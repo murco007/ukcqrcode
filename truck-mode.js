@@ -77,7 +77,7 @@
       '</div></header>';
   };
 
-  billTitle = b => '取餐號碼 ' + String(b.serial ?? b.id ?? '').padStart(4, '0');
+  billTitle = b => b.preorder_channel === 'phone' ? '電話預購' : b.preorder_channel === 'web' ? '網路預購' : '取餐號碼 ' + String(b.serial ?? b.id ?? '').padStart(4, '0');
 
   cartContent = function () {
     return '<div class="cart-head"><h2>我的點餐清單</h2>' +
@@ -128,19 +128,19 @@
   };
 
   function latestOrders(kitchenView) {
-    return grouped().filter(order => !kitchenView || order.status === 'paid').sort((a,b)=>Number(b.serial||0)-Number(a.serial||0)).slice(0,10);
+    return grouped().filter(order => !kitchenView || order.status === 'paid' || order.preorder_channel === 'phone').sort((a,b)=>Number(b.serial||0)-Number(a.serial||0)).slice(0,10);
   }
 
   function orderCard(order, kitchenView) {
     const allServed=order.lines.every(line=>Number(line.served)===1 || line.served===true);
     const paid=order.status==='paid';
-    return '<article class="truck-order"><div class="truck-order-head"><div><strong>' + esc(billTitle(order)) + '</strong><div class="truck-slot">' + time(order.opened_at) + '</div></div><div><span class="status ' + (paid?'done':'') + '">' + (paid?'已結帳':'待付款') + '</span><br><span class="status ' + (allServed?'done':'') + '">' + (allServed?'已出餐':'製作中') + '</span></div></div><div class="truck-order-body">' +
+    return '<article class="truck-order"><div class="truck-order-head"><div><strong>' + esc(billTitle(order)) + (order.preorder_channel ? ' · ' + esc(order.pickup_code || '') : '') + '</strong><div class="truck-slot">' + (order.preorder_channel === 'phone' ? '客人電話 · 電話預購' : order.preorder_channel === 'web' ? '網路預購取餐碼' : '') + (order.preorder_channel ? '<br>' : '') + time(order.opened_at) + '</div></div><div><span class="status ' + (paid?'done':'') + '">' + (paid?'已結帳':'待付款') + '</span><br><span class="status ' + (allServed?'done':'') + '">' + (allServed?'已出餐':'製作中') + '</span></div></div><div class="truck-order-body">' +
       order.lines.map(line => !kitchenView ?
         '<div class="serve-line"><input type="checkbox" id="serve-' + esc(line.line_id) + '" data-serve="' + esc(line.line_id) + '" ' + (line.served?'checked':'') + (paid?'':' disabled title="請先確認收款"') + '><label for="serve-' + esc(line.line_id) + '"><strong class="' + (line.served?'done-name':'') + '">' + esc(line.name) + ' × ' + line.qty + '</strong>' + (line.note?'<div class="note">' + esc(line.note) + '</div>':'') + '</label></div>' :
         '<div class="truck-line"><div class="row"><span>' + esc(line.name) + ' × ' + line.qty + '</span><b>' + money(line.price*line.qty) + '</b></div>' + (line.note?'<div class="note">' + esc(line.note) + '</div>':'') + '<div class="subtle">' + (line.served?'已出餐':'待出餐') + '</div></div>'
       ).join('') +
       '<div class="row" style="padding:12px 0"><strong>合計</strong><strong class="price">' + money(order.total) + '</strong></div></div><div class="truck-order-actions">' +
-      (!kitchenView ? (paid ? '<span class="status done">結帳完成</span>' : '<button class="btn small" data-checkout="' + esc(order.id) + '">取餐號碼結帳</button>') : '<span class="subtle">勾選餐點更新出餐狀態</span>') +
+      (!kitchenView ? (paid ? '<span class="status done">結帳完成</span>' : '<button class="btn small" data-checkout="' + esc(order.id) + ''>"+(order.preorder_channel === 'phone' ? '電話預購結帳' : '取餐號碼結帳')+'</button>') : '<span class="subtle">勾選餐點更新出餐狀態</span>') +
       '<button class="btn small danger" data-truck-delete="' + esc(order.id) + '">移除訂單</button></div></article>';
   }
 
