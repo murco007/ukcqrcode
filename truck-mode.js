@@ -118,7 +118,30 @@
       '</div></header>';
   };
 
-  billTitle = b => b.preorder_channel === 'phone' ? '電話預購' : b.preorder_channel === 'web' ? '網路預購' : '取餐號碼 ' + String(b.serial ?? b.id ?? '').padStart(4, '0');
+  billTitle = b => b.preorder_channel === 'phone' ? '電話預購' : b.preorder_channel === 'web' ? '網路預購' : '取餐號碼 ' + String(b.serial ?? b.id ?? '').padStart(4, '0') + ' · ' + diningLabel(b);
+
+  let diningMode = '';
+  let diningTable = '';
+  function diningReady() {
+    return diningMode === 'takeaway' || (diningMode === 'dine_in' && /^[1-9]\d*$/.test(diningTable) && Number.isSafeInteger(Number(diningTable)) && Number(diningTable) <= 2147483647);
+  }
+  function diningControls() {
+    const radio = (value, label) => '<label><input type="radio" name="dining-mode" value="' + value + '"' + (diningMode === value ? ' checked' : '') + '> ' + label + '</label>';
+    return '<fieldset' + (busy ? ' disabled' : '') + '><legend>用餐方式（必選）</legend>' + radio('takeaway','外帶') + '　' + radio('dine_in','內用') +
+      (diningMode === 'dine_in' ? '<div><label>內用桌號 <input id="dining-table" inputmode="numeric" pattern="[1-9][0-9]*" required value="' + esc(diningTable) + '"></label></div>' : '') + '</fieldset>';
+  }
+  document.addEventListener('change', event => {
+    if (event.target.name !== 'dining-mode') return;
+    diningMode = event.target.value;
+    diningTable = '';
+    $('#cart').innerHTML = cartContent();
+    $('#dining-table')?.focus();
+  });
+  document.addEventListener('input', event => {
+    if (event.target.id !== 'dining-table') return;
+    diningTable = event.target.value.trim();
+    $('#cart [data-action="submit"]').disabled = !diningReady() || !state.cart.length || busy || !state.online || state.cloudReady === false;
+  });
 
   cartContent = function () {
     return '<div class="cart-head"><h2>我的點餐清單</h2>' +
@@ -127,8 +150,8 @@
       (state.cart.length ? state.cart.map((x, i) =>
         '<div class="cart-item"><strong>' + esc(x.name) + '</strong><div class="row"><div class="qty"><button aria-label="減少" data-qty="' + i + '" data-delta="-1">−</button><span>' + x.qty + '</span><button aria-label="增加" data-qty="' + i + '" data-delta="1">+</button></div><b>' + money(x.price * x.qty) + '</b></div><button class="link-button" data-note="' + i + '">' + (x.note ? '備註：' + esc(x.note) : '新增餐點備註') + '</button></div>'
       ).join('') : '<div class="cart-empty"><span class="empty-icon">🍲</span><strong>還沒有選餐</strong>請從餐點清單加入餐點</div>') +
-      '<div class="cart-total row"><span>合計</span><strong class="price">' + money(cartTotal()) + '</strong></div>' +
-      '<button class="btn" data-action="submit" ' + (state.cloudReady === false || !state.cart.length || busy || !state.online ? 'disabled' : '') + '>' + (busy ? '送單中…' : '送出訂單') + '</button>' +
+      diningControls() + '<div class="cart-total row"><span>合計</span><strong class="price">' + money(cartTotal()) + '</strong></div>' +
+      '<button class="btn" data-action="submit" ' + (state.cloudReady === false || !diningReady() || !state.cart.length || busy || !state.online ? 'disabled' : '') + '>' + (busy ? '送單中…' : '送出訂單') + '</button>' +
       '<div class="cart-note">送單後請記下畫面上的取餐號碼，至櫃檯依號結帳。</div>' +
       (state.cart.length ? '' : '');
   };
@@ -149,15 +172,16 @@
   };
 
   submitOrder = async function () {
-    if (busy || !state.cart.length) return;
+    if (busy || !state.cart.length || !diningReady()) return;
+    const dining = {dining_mode:diningMode, dining_table:diningMode === 'dine_in' ? Number(diningTable) : null};
     busy = true; renderGuest();
     const orderItems = state.cart.map(x => ({ id:x.id, qty:x.qty, note:x.note || '', price:x.price }));
     try {
       const requestId = newId();
-      const result = await api('/api/order', { requestId, items:orderItems });
+      const result = await api('/api/order', { requestId, items:orderItems, ...dining });
       rememberTicket(result.serial, requestId);
-      state.cart = []; persist(); state.drawer = false;
-      modal('<div class="truck-confirm"><h2>訂單已送出</h2><div>請記下您的取餐號碼</div><div class="truck-confirm-number">' + esc(String(result.serial).padStart(4,'0')) + '</div><hr>' +
+      diningMode = ''; diningTable = ''; state.cart = []; persist(); state.drawer = false;
+      modal('<div class="truck-confirm"><h2>訂單已送出</h2><p>' + esc(diningLabel(dining)) + '</p><div>請記下您的取餐號碼</div><div class="truck-confirm-number">' + esc(String(result.serial).padStart(4,'0')) + '</div><hr>' +
         orderItems.map(x => { const p=state.menu.find(y=>y.id===x.id); return '<div class="row"><span>' + esc(p?.name || '') + ' × ' + x.qty + (x.note ? '<div class="note">' + esc(x.note) + '</div>' : '') + '</span><b>' + money((p?.price || x.price) * x.qty) + '</b></div>'; }).join('') +
         '<div class="row" style="margin-top:14px"><strong>合計</strong><strong>' + money(orderItems.reduce((sum,x)=>sum+x.price*x.qty,0)) + '</strong></div><p class="checkout-reminder">訂單待付款／待櫃檯確認；確認收款後廚房才會出單</p></div><div class="modal-actions"><button class="btn" data-action="close">完成</button></div>');
     } catch (error) {
