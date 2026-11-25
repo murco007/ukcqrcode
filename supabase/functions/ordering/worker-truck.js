@@ -172,6 +172,9 @@ async function api(req,env,u){
  if(path==='/api/menu'&&req.method==='GET')return json({menu:await menu(db),role,canManageStaff:staffOwner(identity),username:identity?.username||'',displayName:identity?.name||'',sourceDate:'2026-11-19'});
  if(path==='/api/table'&&req.method==='GET'){if(!role)fail('請先登入員工後台。',401);const t=Number(u.searchParams.get('table'));if(!validTable(t))fail('桌號必須為 1–10');return json(await tableState(db,t));}
  if(path==='/api/order/status'&&req.method==='GET'){const requestId=String(u.searchParams.get('requestId')||'');if(!/^[a-zA-Z0-9-]{16,64}$/.test(requestId))fail('取餐資料錯誤。');const row=await db.prepare('SELECT b.serial,b.status,COUNT(l.id) AS line_count,SUM(CASE WHEN l.served=1 THEN 1 ELSE 0 END) AS served_count FROM lines source JOIN bills b ON b.id=source.bill_id JOIN lines l ON l.bill_id=b.id WHERE source.id LIKE ? GROUP BY b.id').bind(requestId+'-%').first();if(!row)fail('找不到此取餐號碼。',404);const lineCount=Number(row.line_count),servedCount=Number(row.served_count);return json({serial:Number(row.serial),status:row.status,ready:row.status==='paid'&&lineCount>0&&lineCount===servedCount});} if(path==='/api/order'&&req.method==='POST'){
+  if(!['takeaway','dine_in'].includes(b.dining_mode))fail('請選擇內用或外帶。');
+  if(b.dining_mode==='dine_in' && (!Number.isInteger(b.dining_table)||b.dining_table<1||b.dining_table>2147483647))fail('請填寫有效的內用桌號。');
+  if(b.dining_mode==='takeaway' && b.dining_table!=null)fail('外帶不需桌號。');
   if(!/^[a-zA-Z0-9-]{16,64}$/.test(b.requestId||''))fail('缺少送單識別碼。');
   if(!Array.isArray(b.items)||!b.items.length||b.items.length>30)fail('請選擇 1–30 項餐點。');
   const products=await menu(db),stamp=now();
@@ -184,7 +187,7 @@ async function api(req,env,u){
   const t=Number(slot.slot),last=await db.prepare('SELECT COALESCE(MAX(generation),0) AS generation FROM bills WHERE table_no=?').bind(t).first(),g=Number(last.generation)+1,billId=t+':'+g;
   const seq=await db.prepare("SELECT nextval('ticket_serial') AS serial").first(),serial=Number(seq.serial);
   await db.prepare('INSERT INTO dining_tables(table_no,generation) VALUES(?,?) ON CONFLICT(table_no) DO UPDATE SET generation=excluded.generation').bind(t,g).run();
-  await db.prepare("INSERT INTO bills(id,table_no,generation,serial,status,opened_at,archived) VALUES(?,?,?,?,'open',?,false)").bind(billId,t,g,serial,stamp).run();
+  await db.prepare("INSERT INTO bills(id,table_no,generation,serial,status,opened_at,archived,dining_mode,dining_table) VALUES(?,?,?,?,'open',?,false,?,?)").bind(billId,t,g,serial,stamp,b.dining_mode,b.dining_table??null).run();
   await db.batch(items.map(x=>db.prepare('INSERT INTO lines(id,bill_id,product_id,name,price,qty,note,created_at,served) VALUES(?,?,?,?,?,?,?,?,0)').bind(x.id,billId,x.p.id,x.p.name,x.p.price,x.qty,x.note,stamp)));
   await db.prepare("INSERT INTO print_jobs(id,kind,bill_id,created_at) VALUES(?,'kitchen',?,?)").bind('order:'+b.requestId,billId,stamp).run();
   await db.prepare("INSERT INTO print_jobs(id,kind,bill_id,created_at) VALUES(?,'kitchen_cashier',?,?)").bind('cashier-order:'+b.requestId,billId,stamp).run();
