@@ -602,17 +602,22 @@ window.__startTruckApp=()=>{load();setInterval(refresh,2500)};
     modeSelect.addEventListener('change',async ()=>{
      if(busy||connecting){modeSelect.value=printMode();message('請等待目前列印或連線完成。');return;}
      const selected=modeSelect.value;
-     const changingStoreSetting=selected==='none'||state.printQueueEnabled===false;
+     const keep=state.role==='admin'&&['kitchen','receipt'].includes(selected)?selected:null;
+     const changingStoreSetting=selected==='none'||state.printQueueEnabled===false||keep!==null;
      if(selected==='none'&&!confirm('將取消全店目前待印的單據，並停止建立新列印工作。確定停用？')){
       modeSelect.value=printMode();return;
      }
      busy=true;modeSelect.disabled=true;
      try{
       if(changingStoreSetting){
-       const updated=await call('/api/print/settings',{enabled:selected!=='none'});
+       const wasDisabled=state.printQueueEnabled===false;
+       const updated=await call('/api/print/settings',{enabled:selected!=='none',...(keep?{keep}:{})});
        state.printQueueEnabled=updated.enabled;
-       pref.auto=false;
-       message(updated.enabled?'已恢復建立新列印工作，請回工作台啟用自動列印。':'已取消 '+updated.cancelled+' 筆待印單據，並停止建立新列印工作。');
+       if(!updated.enabled||wasDisabled)pref.auto=false;
+       if(keep){
+        const cleared=keep==='kitchen'?'結帳清單':'廚房單';
+        message('已取消 '+updated.cancelled+' 筆待印'+cleared+'。'+(wasDisabled?'請回工作台啟用自動列印。':''));
+       }else message(updated.enabled?'已恢復建立新列印工作，請回工作台啟用自動列印。':'已取消 '+updated.cancelled+' 筆待印單據，並停止建立新列印工作。');
       }else message('自動列印內容已更新。');
       if(selected!=='none')pref.printMode=selected;
       save();
