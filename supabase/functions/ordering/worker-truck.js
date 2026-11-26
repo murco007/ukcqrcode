@@ -90,6 +90,14 @@ async function preorderApi(req,db,u,b,role,env){
 
 async function printingApi(req,db,u,b,role){
  const can=kind=>role==='admin'||role===(kind==='kitchen'?'kitchen':'cashier');
+ if(u.pathname==='/api/print/settings'&&req.method==='POST'){
+  if(role!=='admin')fail('僅管理員可變更全店列印設定。',403);
+  if(typeof b.enabled!=='boolean')fail('列印設定格式錯誤。');
+  await db.prepare('UPDATE print_queue_settings SET enabled=? WHERE id=1').bind(b.enabled).run();
+  if(b.enabled)return json({enabled:true,cancelled:0});
+  const cleared=await db.prepare("UPDATE print_jobs SET status='cancelled',detail=?,updated_at=? WHERE status='pending'").bind('全店停止列印',now()).run();
+  return json({enabled:false,cancelled:cleared.meta.changes});
+ }
  if(u.pathname==='/api/print/receipt'&&req.method==='GET'){const kind=u.searchParams.get('kind')||'receipt';if(!['kitchen','kitchen_cashier','receipt'].includes(kind)||!can(kind))fail('沒有列印權限',403);const id=u.searchParams.get('bill');if(!/^(?:(?:[1-9]|10)|P(?:[1-9]|10)):[1-9][0-9]{0,11}$/.test(id||''))fail('帳單編號錯誤');const bill=await db.prepare('SELECT * FROM bills WHERE id=?').bind(id).first();if(!bill)fail('找不到帳單',404);return json(await printPayload(db,{id:'manual:'+id,kind,bill_id:id,created_at:bill.paid_at||bill.opened_at}));}
 
  if(u.pathname==='/api/print/jobs'&&req.method==='GET'){
@@ -116,12 +124,14 @@ async function printingApi(req,db,u,b,role){
   const historySql=role==='admin'?'SELECT * FROM print_jobs ORDER BY created_at DESC LIMIT 100':role==='kitchen'?"SELECT * FROM print_jobs WHERE kind='kitchen' ORDER BY created_at DESC LIMIT 100":"SELECT * FROM print_jobs WHERE kind IN ('receipt','kitchen_cashier') ORDER BY created_at DESC LIMIT 100";const jobs=(await db.prepare(historySql).all()).results;return json({bills,jobs});
  }
  if(u.pathname==='/api/print/reprint'&&req.method==='POST'){
+  if(!(await db.prepare('SELECT enabled FROM print_queue_settings WHERE id=1').first()).enabled)fail('全店已停止建立列印工作。',409);
   if(!['kitchen','kitchen_cashier','receipt'].includes(b.kind))fail('單據類型錯誤');if(!can(b.kind))fail('沒有列印權限',403);
   const bill=await db.prepare('SELECT * FROM bills WHERE id=?').bind(String(b.billId)).first();if(!bill)fail('找不到訂單',404);
   if(b.kind==='receipt'&&bill.status!=='paid')fail('此帳單尚未結帳，請選擇點餐明細');
   const id='reprint:'+crypto.randomUUID();await db.prepare("INSERT INTO print_jobs(id,kind,bill_id,created_at,detail) VALUES(?,?,?,?,?)").bind(id,b.kind,bill.id,now(),'重印').run();return json({ok:true,id});
  }
  if(u.pathname==='/api/print/retry'&&req.method==='POST'){
+  if(!(await db.prepare('SELECT enabled FROM print_queue_settings WHERE id=1').first()).enabled)fail('全店已停止建立列印工作。',409);
   const retryJob=await db.prepare('SELECT * FROM print_jobs WHERE id=?').bind(String(b.id)).first();if(!retryJob||!can(retryJob.kind))fail('沒有列印權限',403);
   await db.prepare("UPDATE print_jobs SET status='pending',owner='',detail='人工確認補印',updated_at=? WHERE id=? AND status IN ('failed','sending')").bind(now(),String(b.id)).run();return json({ok:true});
  }
@@ -169,7 +179,10 @@ async function api(req,env,u){
   return json({role:r,canManageStaff:staffOwner(account),username:account.username||'',displayName:account.name},200,{'Set-Cookie':'staff='+token+'; HttpOnly; '+(env.LAN_MODE?'':'Secure; ')+'SameSite=Strict; Path=/; Max-Age=43200'});
  }
  if(path==='/api/logout'&&req.method==='POST')return json({ok:true},200,{'Set-Cookie':'staff=; HttpOnly; '+(env.LAN_MODE?'':'Secure; ')+'SameSite=Strict; Path=/; Max-Age=0'});
- if(path==='/api/menu'&&req.method==='GET')return json({menu:await menu(db),role,canManageStaff:staffOwner(identity),username:identity?.username||'',displayName:identity?.name||'',sourceDate:'2026-11-19'});
+ if(path==='/api/menu'&&req.method==='GET'){
+  const printQueueEnabled=role?(await db.prepare('SELECT enabled FROM print_queue_settings WHERE id=1').first()).enabled:true;
+  return json({menu:await menu(db),role,canManageStaff:staffOwner(identity),username:identity?.username||'',displayName:identity?.name||'',sourceDate:'2026-11-19',printQueueEnabled});
+ }
  if(path==='/api/table'&&req.method==='GET'){if(!role)fail('請先登入員工後台。',401);const t=Number(u.searchParams.get('table'));if(!validTable(t))fail('桌號必須為 1–10');return json(await tableState(db,t));}
  if(path==='/api/order/status'&&req.method==='GET'){const requestId=String(u.searchParams.get('requestId')||'');if(!/^[a-zA-Z0-9-]{16,64}$/.test(requestId))fail('取餐資料錯誤。');const row=await db.prepare('SELECT b.serial,b.status,COUNT(l.id) AS line_count,SUM(CASE WHEN l.served=1 THEN 1 ELSE 0 END) AS served_count FROM lines source JOIN bills b ON b.id=source.bill_id JOIN lines l ON l.bill_id=b.id WHERE source.id LIKE ? GROUP BY b.id').bind(requestId+'-%').first();if(!row)fail('找不到此取餐號碼。',404);const lineCount=Number(row.line_count),servedCount=Number(row.served_count);return json({serial:Number(row.serial),status:row.status,ready:row.status==='paid'&&lineCount>0&&lineCount===servedCount});} if(path==='/api/order'&&req.method==='POST'){
   if(!['takeaway','dine_in'].includes(b.dining_mode))fail('請選擇內用或外帶。');
