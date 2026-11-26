@@ -93,7 +93,7 @@ async function printingApi(req,db,u,b,role){
  if(u.pathname==='/api/print/receipt'&&req.method==='GET'){const kind=u.searchParams.get('kind')||'receipt';if(!['kitchen','kitchen_cashier','receipt'].includes(kind)||!can(kind))fail('沒有列印權限',403);const id=u.searchParams.get('bill');if(!/^(?:(?:[1-9]|10)|P(?:[1-9]|10)):[1-9][0-9]{0,11}$/.test(id||''))fail('帳單編號錯誤');const bill=await db.prepare('SELECT * FROM bills WHERE id=?').bind(id).first();if(!bill)fail('找不到帳單',404);return json(await printPayload(db,{id:'manual:'+id,kind,bill_id:id,created_at:bill.paid_at||bill.opened_at}));}
 
  if(u.pathname==='/api/print/jobs'&&req.method==='GET'){
-  const kind=u.searchParams.get('kind');if(!['kitchen','receipt'].includes(kind)||!can(kind))fail('沒有列印權限',403);
+  const kind=u.searchParams.get('kind');if(!['kitchen','kitchen_cashier','receipt'].includes(kind)||!can(kind))fail('沒有列印權限',403);
   return json({jobs:(await db.prepare("SELECT * FROM print_jobs WHERE kind=? AND status='pending' ORDER BY created_at,id LIMIT 1").bind(kind).all()).results});
  }
  if(u.pathname==='/api/print/claim'&&req.method==='POST'){
