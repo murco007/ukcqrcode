@@ -310,7 +310,7 @@ window.__startTruckApp=()=>{load();setInterval(refresh,2500)};
  const owner=localStorage.getItem('cloud-print-owner')||Array.from(crypto.getRandomValues(new Uint8Array(16)),x=>x.toString(16).padStart(2,'0')).join('');localStorage.setItem('cloud-print-owner',owner);
  const save=()=>localStorage.setItem(prefsKey,JSON.stringify(pref));
  const kind=()=>state.role==='kitchen'?'kitchen':state.role==='cashier'?'receipt':path==='/kitchen'?'kitchen':path==='/cashier'?'receipt':pref.work||'receipt';
- const queueKinds=()=>state.role==='cashier'?['kitchen','kitchen_cashier','receipt']:[kind()];
+ const printMode=()=>['none','all','kitchen','receipt'].includes(pref.printMode)?pref.printMode:'all';  const queueKinds=()=>printMode()==='all'?['kitchen','kitchen_cashier','receipt']:printMode()==='kitchen'?['kitchen','kitchen_cashier']:printMode()==='receipt'?['receipt']:[];
  const allowed=()=>state.role==='admin'||state.role===(kind()==='kitchen'?'kitchen':'cashier');
  function message(s){lastMessage=s;const t=document.getElementById('cp-status');if(t)t.textContent=s;}
  async function call(url,body){const r=await cloudFetch(url,{method:body?'POST':'GET',headers:body?{'Content-Type':'application/json'}:{},body:body?JSON.stringify(body):undefined});const j=await r.json();if(!r.ok)throw Error(j.error||'列印連線失敗');return j;}
@@ -567,7 +567,7 @@ window.__startTruckApp=()=>{load();setInterval(refresh,2500)};
   }finally{connecting=false;}
  }
  async function send(job){if(!device?.opened)throw Error('請先連接 USB 印表機');const write=async bytes=>{for(let p=0;p<bytes.length;){const chunk=bytes.slice(p,p+4096),r=await device.transferOut(outEndpoint,chunk);if(r.status!=='ok'||!r.bytesWritten)throw Error('USB 傳送中斷，請確認紙本後補印');p+=r.bytesWritten;}};await write(new Uint8Array([27,64]));for(const band of core.bands(job,pref.narrow?384:576))await write(band);await write(new Uint8Array([27,100,4]));if(pref.cut!==false)await write(new Uint8Array([29,86,66,0]));}
- async function poll(){if(busy||connecting||!pref.auto||!allowed()||!ready()||!['/kitchen','/cashier','/printing','/preorders'].includes(path))return;busy=true;try{
+ async function poll(){if(busy||connecting||!pref.auto||printMode()==='none'||!allowed()||!ready()||!['/kitchen','/cashier','/printing','/preorders'].includes(path))return;busy=true;try{
   if(pref.ack){await call('/api/print/result',pref.ack);delete pref.ack;save();}
   const pending=[];
   for(const queueKind of queueKinds()){const result=await call('/api/print/jobs?kind='+queueKind);if(result.jobs[0])pending.push(result.jobs[0]);}
@@ -582,8 +582,8 @@ window.__startTruckApp=()=>{load();setInterval(refresh,2500)};
   let p=document.getElementById('cp-controls');if(!p){p=document.createElement('section');p.id='cp-controls';p.className='cp-controls';
    const autoMarkup='<label><input type="checkbox" id="cp-auto">'+(state.role==='cashier'?'新訂單廚房單／結帳清單自動列印':'訂單自動列印')+'</label>';
    if(settingsPage){
-    p.innerHTML=platformSettings()+'<div class="actions"><strong>紙張與測試</strong><button class="btn small secondary" id="cp-test" type="button">測試列印</button><label><input type="checkbox" id="cp-narrow">58 mm 紙</label><label><input type="checkbox" id="cp-cut">自動切紙</label>'+(windowsPC?'<a class="btn small secondary" id="cp-download" href="./windows-print-bridge.ps1" download="windows-print-bridge.ps1">下載 Windows 列印程式</a>':'')+'<span id="cp-last"></span></div><div class="cp-status" id="cp-status" role="status" aria-live="polite"></div><small>USB／藍牙連接成功並測試出紙後，再回廚房或前台啟用「訂單(結帳)自動列印」。請保持網頁開啟。系統列印／AirPrint 需手動確認。</small>';
-    document.getElementById('cp-settings-host').appendChild(p);
+    p.innerHTML=platformSettings()+'<div class="actions"><label>自動列印內容 <select id="cp-print-mode"><option value="none">不列印單據</option><option value="all">列印所有單據</option><option value="kitchen">只列印廚房單</option><option value="receipt">只列印結帳單</option></select></label><strong>紙張與測試</strong><button class="btn small secondary" id="cp-test" type="button">測試列印</button><label><input type="checkbox" id="cp-narrow">58 mm 紙</label><label><input type="checkbox" id="cp-cut">自動切紙</label>'+(windowsPC?'<a class="btn small secondary" id="cp-download" href="./windows-print-bridge.ps1" download="windows-print-bridge.ps1">下載 Windows 列印程式</a>':'')+'<span id="cp-last"></span></div><div class="cp-status" id="cp-status" role="status" aria-live="polite"></div><small>USB／藍牙連接成功並測試出紙後，再回廚房或前台啟用「訂單(結帳)自動列印」。請保持網頁開啟。系統列印／AirPrint 需手動確認。</small>';
+    document.getElementById('cp-settings-host').appendChild(p);const modeSelect=p.querySelector('#cp-print-mode');modeSelect.value=printMode();modeSelect.addEventListener('change',e=>{if(busy||connecting){e.target.value=printMode();message('請等待目前列印或連線完成。');return;}pref.printMode=e.target.value;if(pref.printMode==='none')pref.auto=false;save();message('自動列印內容已更新。');decorate();poll();});
    }else{
     p.innerHTML='<div class="actions"><button class="btn small secondary" id="cp-history" type="button">訂單查詢／重印</button>'+autoMarkup+'</div>';
     main.prepend(p);
