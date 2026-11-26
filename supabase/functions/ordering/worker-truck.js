@@ -93,10 +93,13 @@ async function printingApi(req,db,u,b,role){
  if(u.pathname==='/api/print/settings'&&req.method==='POST'){
   if(role!=='admin')fail('僅管理員可變更全店列印設定。',403);
   if(typeof b.enabled!=='boolean')fail('列印設定格式錯誤。');
+  if(b.keep!==undefined&&(!b.enabled||!['kitchen','receipt'].includes(b.keep)))fail('列印類型格式錯誤。');
   await db.prepare('UPDATE print_queue_settings SET enabled=? WHERE id=1').bind(b.enabled).run();
-  if(b.enabled)return json({enabled:true,cancelled:0});
-  const cleared=await db.prepare("UPDATE print_jobs SET status='cancelled',detail=?,updated_at=? WHERE status='pending'").bind('全店停止列印',now()).run();
-  return json({enabled:false,cancelled:cleared.meta.changes});
+  if(b.enabled&&!b.keep)return json({enabled:true,cancelled:0});
+  const filter=b.keep==='kitchen'?" AND kind='receipt'":b.keep==='receipt'?" AND kind IN ('kitchen','kitchen_cashier')":'';
+  const detail=b.enabled?'切換為單一列印模式':'全店停止列印';
+  const cleared=await db.prepare("UPDATE print_jobs SET status='cancelled',detail=?,updated_at=? WHERE status='pending'"+filter).bind(detail,now()).run();
+  return json({enabled:b.enabled,cancelled:cleared.meta.changes});
  }
  if(u.pathname==='/api/print/receipt'&&req.method==='GET'){const kind=u.searchParams.get('kind')||'receipt';if(!['kitchen','kitchen_cashier','receipt'].includes(kind)||!can(kind))fail('沒有列印權限',403);const id=u.searchParams.get('bill');if(!/^(?:(?:[1-9]|10)|P(?:[1-9]|10)):[1-9][0-9]{0,11}$/.test(id||''))fail('帳單編號錯誤');const bill=await db.prepare('SELECT * FROM bills WHERE id=?').bind(id).first();if(!bill)fail('找不到帳單',404);return json(await printPayload(db,{id:'manual:'+id,kind,bill_id:id,created_at:bill.paid_at||bill.opened_at}));}
 
@@ -107,9 +110,21 @@ async function printingApi(req,db,u,b,role){
  if(u.pathname==='/api/print/claim'&&req.method==='POST'){
   const job=await db.prepare('SELECT * FROM print_jobs WHERE id=?').bind(String(b.id)).first();if(!job||!can(job.kind))fail('沒有列印權限',403);
   if(!/^[a-zA-Z0-9-]{8,80}$/.test(b.owner||''))fail('裝置識別錯誤');
+  if(job.status!=='pending')fail('此工作已被處理',409);
+  const duplicateId=job.kind==='kitchen'&&job.id.startsWith('order:')?'cashier-order:'+job.id.slice(6):
+   job.kind==='kitchen_cashier'&&job.id.startsWith('cashier-order:')?'order:'+job.id.slice(14):null;
+  const duplicate=duplicateId?await db.prepare('SELECT status FROM print_jobs WHERE id=? AND bill_id=?').bind(duplicateId,job.bill_id).first():null;
+  if(duplicate&&['sending','sent'].includes(duplicate.status)){
+   await db.prepare("UPDATE print_jobs SET status='cancelled',detail=?,updated_at=? WHERE id=? AND status='pending'").bind('另一工作台已接收同一張廚房單',now(),job.id).run();
+   fail('另一工作台已接收同一張廚房單',409);
+  }
+  const payload=await printPayload(db,{...job,owner:b.owner,status:'sending'});
   const r=await db.prepare("UPDATE print_jobs SET status='sending',owner=?,updated_at=? WHERE id=? AND status='pending'").bind(b.owner,now(),job.id).run();
   if(!r.meta.changes)fail('此工作已被其他裝置接收',409);
-  return json(await printPayload(db,{...job,owner:b.owner,status:'sending'}));
+  if(duplicate?.status==='pending'){
+   await db.prepare("UPDATE print_jobs SET status='cancelled',detail=?,updated_at=? WHERE id=? AND bill_id=? AND status='pending'").bind('另一工作台已接收同一張廚房單',now(),duplicateId,job.bill_id).run();
+  }
+  return json(payload);
  }
  if(u.pathname==='/api/print/result'&&req.method==='POST'){
   const job=await db.prepare('SELECT * FROM print_jobs WHERE id=?').bind(String(b.id)).first();if(!job||!can(job.kind))fail('沒有列印權限',403);
